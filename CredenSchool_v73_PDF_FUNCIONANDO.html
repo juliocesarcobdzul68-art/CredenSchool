@@ -1,0 +1,1817 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<title>CredenSchool Pro+ | Generador de Credenciales | Modo local</title>
+<style>
+:root{--p:#123c7a;--a:#f0a500;--bg:#f3f6fb;--ink:#172033;--mut:#667085;--card:#fff;--line:#dbe2ea}
+*{box-sizing:border-box}body{margin:0;font-family:Segoe UI,Arial,sans-serif;background:var(--bg);color:var(--ink)}
+button,input,select,textarea{font:inherit}button{cursor:pointer;border:0;border-radius:10px;padding:10px 14px;font-weight:700}
+.btn{background:var(--p);color:white}.btn2{background:#eef2f7;color:#22304a}.danger{background:#c62828;color:#fff}.warn{background:#fff1d6;color:#805400}.ok{background:#138a52;color:#fff}
+header{background:linear-gradient(135deg,var(--p),#0b2450);color:white;padding:16px 20px;display:flex;align-items:center;justify-content:space-between;gap:15px;position:sticky;top:0;z-index:20}
+header h1{margin:0;font-size:21px}header small{opacity:.8}
+nav{display:flex;gap:8px;flex-wrap:wrap;padding:12px 16px;background:white;border-bottom:1px solid var(--line);position:sticky;top:64px;z-index:19}
+nav button.active{background:var(--p);color:#fff}
+main{max-width:1400px;margin:auto;padding:18px}.tab{display:none}.tab.active{display:block}
+.grid{display:grid;grid-template-columns:repeat(12,1fr);gap:14px}.col12{grid-column:span 12}.col8{grid-column:span 8}.col6{grid-column:span 6}.col4{grid-column:span 4}.col3{grid-column:span 3}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;box-shadow:0 3px 15px #17335b0d}.card h2,.card h3{margin:0 0 12px}.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+label{font-weight:700;font-size:13px;display:block;margin-bottom:5px}input,select,textarea{width:100%;padding:10px 11px;border:1px solid #cfd8e3;border-radius:9px;background:#fff}textarea{min-height:80px;resize:vertical}
+table{width:100%;border-collapse:collapse}th,td{padding:9px;border-bottom:1px solid var(--line);text-align:left;font-size:13px}th{background:#f7f9fc}
+.badge{display:inline-block;padding:4px 8px;border-radius:999px;background:#eaf0ff;color:var(--p);font-size:12px;font-weight:700}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.kpi{padding:16px;border-radius:14px;background:white;border:1px solid var(--line)}.kpi b{font-size:28px;display:block}
+.layout{display:grid;grid-template-columns:360px 1fr;gap:16px}
+.editor{min-height:520px;position:relative;background:#e9edf3;border-radius:14px;display:flex;justify-content:center;align-items:center;overflow:auto;padding:30px}
+.cred{position:relative;background:white;border:2px solid #111;border-radius:12px;overflow:hidden;box-shadow:0 10px 25px #0002;flex:none}
+.cred.land{width:430px;height:270px}.cred.port{width:330px;height:500px}.cred.t-tecnologico{border-radius:18px}.cred.t-deportivo{border-radius:22px}.cred.t-elegante{border-radius:4px;border-width:3px}.cred.t-infantil{border-radius:28px}.cred.t-creativo{border-radius:24px}.cred.t-institucional{border-radius:6px}.cred.t-negrodorado{border-radius:10px;border-width:2px}.cred.t-marfiloro{border-radius:10px;border-width:2px}.cred.t-azulejecutivo{border-radius:14px}.cred.t-grafito{border-radius:5px;border-width:2px}.cred.t-cafeoro{border-radius:12px}
+.cred.t-azulacero{border-radius:16px}
+.cred.t-moderno{border-radius:18px;border-width:2px}
+.cred.t-escolar{border-radius:10px;border-width:3px}
+.cred.t-academico{border-radius:7px;border-width:2px}
+.cred.t-universitario{border-radius:14px;border-width:2px}
+.cred.t-corporativo{border-radius:8px;border-width:2px}
+.cred.t-minimalista{border-radius:3px;border-width:1px}
+.cred.t-marino{border-radius:16px;border-width:2px}
+.cred.t-esmeralda{border-radius:18px;border-width:2px}
+.cred.t-vino{border-radius:9px;border-width:2px}
+.cred.t-holografico{border-radius:20px;border-width:2px}
+.cred.t-tecnologia{border-radius:20px;border-width:2px}
+.cred.t-infantilplus{border-radius:30px;border-width:3px}
+.cred.t-seguridad{border-radius:5px;border-width:3px}
+.cred.t-oficial{border-radius:4px;border-width:3px}
+.frame-double{border:3px double #222!important}.frame-gold{border:3px solid #c9a227!important}.frame-none{border:0!important}
+.ce{position:absolute;min-width:30px;min-height:18px;padding:3px;border:1px dashed transparent;cursor:move;user-select:none}.ce.selected{border:1px dashed #e53935;background:#e539350b}
+.ce .handle{position:absolute;right:-5px;bottom:-5px;width:10px;height:10px;background:#e53935;border-radius:50%;display:none}.ce.selected .handle{display:block;cursor:nwse-resize}
+.photoBox{border-radius:8px;overflow:hidden;background:#eef1f5;display:flex;align-items:center;justify-content:center}.photoBox img{width:100%;height:100%;object-fit:cover}
+.photoShape-round{border-radius:50%!important}.photoShape-round img{border-radius:50%}
+.photoShape-oval{border-radius:50%!important}.photoShape-oval{aspect-ratio:4/5}
+.photoShape-rounded{border-radius:22px!important}
+.cameraPanel{margin-top:8px;padding:10px;border:1px solid #d8dee8;border-radius:10px;background:#f8fafc}.cameraPanel video,.cameraPanel canvas{width:100%;max-width:360px;aspect-ratio:4/3;object-fit:cover;border-radius:8px;background:#111}.cameraBtns{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.qr{width:70px;height:70px;background:repeating-conic-gradient(#111 0 25%,#fff 0 50%) 50%/12px 12px;border:5px solid white;box-shadow:0 0 0 1px #111}
+.signature{max-width:130px;max-height:50px;object-fit:contain}
+.directorSign{overflow:visible!important;white-space:normal!important;color:#111!important}
+@media print{.directorSign{display:block!important;visibility:visible!important;opacity:1!important;overflow:visible!important;z-index:100!important}.directorSign .signature{display:block!important;visibility:visible!important}}
+.toolbar{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}.toolbar button{padding:8px 10px}
+.template-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.tpl{border:2px solid var(--line);border-radius:12px;padding:10px;background:#fff}.tpl:hover{border-color:var(--p)}.tpl .mini{height:120px;border-radius:8px;margin-bottom:8px}
+.modal{position:fixed;inset:0;background:#0008;display:none;align-items:center;justify-content:center;z-index:50;padding:20px}.modal.show{display:flex}.modalBox{background:white;border-radius:16px;max-width:520px;width:100%;padding:20px}
+.login{min-height:100vh;display:none;place-items:center;background:linear-gradient(135deg,#07172f,#1d5ab1)}.loginBox{width:min(420px,92vw);background:#fff;border-radius:20px;padding:28px;box-shadow:0 20px 60px #0005}.logoTitle{text-align:center;margin-bottom:18px}
+.hidden{display:none!important}.muted{color:var(--mut)}.right{text-align:right}.small{font-size:12px}
+@media(max-width:950px){.layout{grid-template-columns:1fr}.col8,.col6,.col4,.col3{grid-column:span 12}.kpis{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:600px){main{padding:10px}.kpis{grid-template-columns:1fr 1fr}.template-grid{grid-template-columns:1fr 1fr}.cred.land{width:360px;height:226px}.cred.port{width:270px;height:410px}}
+@media print{body{background:white}header,nav,.noPrint,.card:not(.printCard){display:none!important}.tab{display:none!important}.printArea{display:block!important}.printArea .printCard{display:block!important;box-shadow:none;border:0}.editor{background:white;padding:0}.cred{box-shadow:none}}
+
+
+<style>
+/* v50: evitar cualquier capa invisible que bloquee la captura o los botones */
+#app{visibility:visible!important;opacity:1!important;pointer-events:auto!important}
+#login{pointer-events:auto!important}
+.cameraPanel,.cameraPanel *{pointer-events:auto!important}
+input[type="file"]{cursor:pointer!important}
+
+/* v71: QR ajustado para quedar completamente dentro de la credencial */
+.pc .ce[data-k="qr"]{
+  right:8px!important;
+  left:auto!important;
+  top:auto!important;
+  bottom:6px!important;
+  width:100px!important;
+  height:104px!important;
+  overflow:visible!important;
+  z-index:80!important;
+}
+.pc .ce[data-k="qr"] > div:first-child{
+  width:100px!important;
+  height:100px!important;
+  padding:3px!important;
+  box-sizing:border-box!important;
+}
+.pc .ce[data-k="qr"] img.qr,
+.pc .ce[data-k="qr"] .qrFallback{
+  width:92px!important;
+  height:92px!important;
+}
+</style>
+</style>
+<!-- Modo local: no se carga Supabase. -->
+<script>
+async function cargarExcelJS(){
+  if(window.XLSX) return true;
+  try{
+    await new Promise((resolve,reject)=>{
+      const sc=document.createElement('script');
+      sc.src='https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js';
+      sc.onload=resolve; sc.onerror=reject;
+      document.head.appendChild(sc);
+    });
+    return !!window.XLSX;
+  }catch(e){ return false; }
+}
+</script>
+</head>
+<body>
+<div id="login" class="login">
+ <div class="loginBox">
+  <div class="logoTitle"><h1>🎓 CredenSchool Pro+</h1><p class="muted">Generador profesional de credenciales escolares</p></div>
+  <label>Correo electrónico</label><input id="lgUser" type="text" value="admin" autocomplete="username" placeholder="admin">
+  <label style="margin-top:10px">Contraseña</label><input id="lgPass" type="password" value="" autocomplete="current-password" placeholder="Escribe la contraseña">
+  <button class="btn" style="width:100%;margin-top:15px;cursor:pointer;position:relative;z-index:10000;pointer-events:auto" id="loginBtn" type="button" onclick="return window.CS_LOGIN_NOW ? window.CS_LOGIN_NOW() : alert('El módulo de acceso aún está cargando. Cierra y vuelve a abrir la aplicación.')">Entrar</button>
+   <button type="button" class="btn2" style="width:100%;margin-top:8px" onclick="resetAccess()">🔑 Restablecer acceso</button>
+   <button type="button" class="btn2" style="width:100%;margin-top:8px" onclick="cambiarContrasena()">🔐 Cambiar contraseña</button>
+   <button id="entrarDirectoLocal" type="button" class="btn2" style="width:100%;margin-top:8px">🚪 Entrar al modo local</button>
+  <button class="btn2" style="width:100%;margin-top:8px" onclick="openCloudConfig()">⚙️ Configurar conexión</button>
+  <p id="cloudStatus" class="small muted" style="margin:10px 0 0"></p><p class="small" style="margin:10px 0 0;padding:9px;border-radius:9px;background:#eef6ff;color:#123c7a"><b>Modo local:</b> no necesitas configurar Supabase para comenzar.</p>
+  <p id="lgErr" class="small" style="color:#c62828"></p><p class="small muted">Acceso protegido: usuario <b>admin</b> y contraseña configurada. Si el navegador bloquea la cámara, usa "Subir fotografía" o abre la app mediante un servidor local/HTTPS.</p>
+ </div>
+</div>
+
+
+
+
+<div id="captureReady" style="position:fixed;right:14px;bottom:14px;z-index:9999;background:#138a52;color:#fff;padding:10px 14px;border-radius:10px;font-weight:700;box-shadow:0 5px 18px #0003">
+  ✓ Captura habilitada
+</div>
+
+<div id="app" style="display:none">
+<header><div><h1>🎓 CredenSchool Pro+</h1><small id="schoolHeader">ESCUELA PABLO GALEANA T.V.</small></div><div class="row"><span id="roleBadge" class="badge" style="background:#ffffff22;color:#fff">Administrador</span><button class="btn2" onclick="logout()">Cerrar sesión</button></div></header>
+<nav id="nav">
+ <button class="btn2 active" data-tab="inicio">Inicio</button><button class="btn2" data-tab="escuela">Escuela</button><button class="btn2" data-tab="alumnos">Alumnos</button><button class="btn2" data-tab="diseno">Diseño</button><button class="btn2" data-tab="impresion">Impresión</button><button class="btn2" data-tab="seguridad">Seguridad</button><button class="btn2" data-tab="respaldo">Respaldo</button><button class="btn2" data-tab="nube">☁️ Nube</button>
+</nav>
+<main>
+<section id="inicio" class="tab active">
+ <div class="kpis"><div class="kpi">Alumnos<b id="kStudents">0</b></div><div class="kpi">Con fotografía<b id="kPhotos">0</b></div><div class="kpi">Con tutor<b id="kTutors">0</b></div><div class="kpi">Diseño activo<b id="kTemplate">Clásico</b></div></div>
+ <div class="card" style="margin-top:14px"><h2>Acciones rápidas</h2><div class="row"><button class="btn" onclick="newStudent();go('alumnos')">➕ Nuevo alumno</button><button class="btn2" onclick="go('diseno')">🎨 Diseñar credencial</button><button class="btn2" onclick="go('impresion')">🖨️ Imprimir</button><button class="btn2" onclick="exportJSON()">💾 Respaldar</button></div></div>
+ <div class="card" style="margin-top:14px"><h2>Características</h2><p>QR escaneable, fotografía por cámara, frente y reverso, firma del director, plantillas, tamaño/orientación, editor visual, impresión múltiple, búsqueda, eliminación y respaldo de datos.</p></div>
+</section>
+
+<section id="escuela" class="tab">
+<div class="card"><h2>Datos de la escuela</h2><div class="notice" style="margin:10px 0;padding:12px;border:1px solid #cbd5e1;border-radius:10px;background:#f8fafc">
+      <b>📄 PDF:</b> usa la impresión del navegador para conservar la credencial completa.
+      En la ventana que aparece selecciona <b>Guardar como PDF</b>.
+    </div><div class="grid">
+<div class="col6"><label>Nombre</label><input id="sName"></div><div class="col3"><label>CCT</label><input id="sCct"></div><div class="col3"><label>Ciclo escolar</label><input id="sCycle"></div>
+<div class="col3"><label>Turno</label><select id="sShift"><option>Matutino</option><option>Vespertino</option><option>Tiempo completo</option></select></div><div class="col3"><label>Director</label><input id="sDirector"></div><div class="col3"><label>Teléfono</label><input id="sPhone"></div><div class="col3"><label>Dirección</label><input id="sAddress"></div>
+<div class="col6"><label>Logo 1</label><input id="sLogo" type="file" accept="image/*"><div id="schoolLogoPreview" class="small muted" style="margin-top:6px"></div></div>
+<div class="col6"><label>Logo 2</label><input id="sLogo2" type="file" accept="image/*"><div id="schoolLogo2Preview" class="small muted" style="margin-top:6px"></div></div>
+<div class="col6"><label>Firma del director</label><input id="sSignature" type="file" accept="image/*"></div>
+</div><div class="row" style="margin-top:12px"><button class="btn" onclick="saveSchool()">Guardar escuela</button><button class="danger" onclick="resetApp()">Restablecer aplicación</button></div></div>
+</section>
+
+<section id="alumnos" class="tab">
+<div class="grid">
+<div class="col4"><div class="card"><h2 id="studentTitle">Nuevo alumno</h2><input type="hidden" id="stId">
+<label>Nombre completo</label><input id="stName"><div class="grid" style="margin-top:8px"><div class="col6"><label>Grado</label><input id="stGrade"></div><div class="col6"><label>Grupo</label><input id="stGroup"></div><div class="col6"><label>Matrícula</label><input id="stMat"></div><div class="col6"><label>Fecha de nacimiento</label><input id="stBirth" type="date"></div></div>
+<label style="margin-top:8px">Fotografía</label>
+<div class="row">
+  <label class="btn" style="display:inline-block;margin:0;cursor:pointer">📱 Tomar / seleccionar fotografía
+    <input id="stPhoto" type="file" accept="image/*" capture="user" style="display:none">
+  </label>
+  <button type="button" class="btn2" onclick="openCamera()">📷 Abrir cámara</button>
+</div>
+<div id="stPhotoPreview"></div>
+<div class="small muted">En celular, “Tomar / seleccionar fotografía” puede abrir directamente la cámara. En computadora, usa “Abrir cámara” y permite el acceso cuando el navegador lo solicite.</div>
+<div class="cameraPanel">
+  <video id="cameraVideo" autoplay playsinline muted style="display:none"></video>
+  <canvas id="cameraCanvas" style="display:none"></canvas>
+  <div id="cameraStatus" class="small muted">Cámara cerrada.</div>
+  <div class="cameraBtns">
+    <button type="button" class="btn2" onclick="openCamera()">📷 Abrir cámara</button>
+    <button type="button" class="btn2" id="takePhotoBtn" onclick="takePhoto()" style="display:none">📸 Tomar fotografía</button>
+    <button type="button" class="btn2" id="retakePhotoBtn" onclick="retakePhoto()" style="display:none">🔄 Volver a tomar</button>
+    <button type="button" class="btn" id="usePhotoBtn" onclick="useCapturedPhoto()" style="display:none">✅ Usar fotografía</button>
+    <button type="button" class="danger" id="closeCameraBtn" onclick="closeCamera()" style="display:none">✖ Cerrar cámara</button>
+  </div>
+</div>
+<label style="margin-top:8px">Padre / madre / tutor</label><input id="stTutor"><label style="margin-top:8px">Teléfono tutor</label><input id="stTutorPhone">
+<label style="margin-top:8px">Fotografía del padre / tutor</label>
+<div class="row">
+  <label class="btn" style="display:inline-block;margin:0;cursor:pointer">📱 Tomar / seleccionar fotografía
+    <input id="stTutorPhoto" type="file" accept="image/*" capture="user" style="display:none">
+  </label>
+  <button type="button" class="btn2" onclick="openTutorCamera()">📷 Abrir cámara del tutor</button>
+</div>
+<div id="stTutorPhotoPreview" class="small muted" style="margin-top:6px">Sin fotografía del tutor.</div>
+<div class="cameraPanel" id="tutorCameraPanel" style="display:none">
+  <video id="tutorCameraVideo" autoplay playsinline muted style="display:none"></video>
+  <canvas id="tutorCameraCanvas" style="display:none"></canvas>
+  <div id="tutorCameraStatus" class="small muted">Cámara cerrada.</div>
+  <div class="cameraBtns">
+    <button type="button" class="btn2" id="tutorTakePhotoBtn" onclick="takeTutorPhoto()" style="display:none">📸 Tomar fotografía</button>
+    <button type="button" class="btn2" id="tutorRetakePhotoBtn" onclick="retakeTutorPhoto()" style="display:none">🔄 Volver a tomar</button>
+    <button type="button" class="btn" id="tutorUsePhotoBtn" onclick="useTutorCapturedPhoto()" style="display:none">✅ Usar fotografía</button>
+    <button type="button" class="danger" id="tutorCloseCameraBtn" onclick="closeTutorCamera()" style="display:none">✖ Cerrar cámara</button>
+  </div>
+</div>
+<label style="margin-top:8px">Suplente</label><input id="stBackup"><label style="margin-top:8px">Teléfono suplente</label><input id="stBackupPhone">
+<label style="margin-top:8px">Notas / emergencia</label><textarea id="stNotes"></textarea>
+<div class="row" style="margin-top:10px"><button class="btn" onclick="saveStudent()">Guardar</button><button class="btn2" onclick="newStudent()">Limpiar</button></div>
+</div></div>
+<div class="col8"><div class="card">
+<div class="card" style="margin-bottom:12px;background:#f8fafc;border:1px dashed #b8c4d6">
+  <h3 style="margin:0 0 8px">📊 Generar credenciales desde Excel</h3>
+  <p class="small muted" style="margin:0 0 10px">
+    Selecciona un archivo .xlsx, .xls o .csv. La primera fila debe contener los encabezados.
+    Se crearán los alumnos automáticamente y después podrás generar el PDF de todos.
+  </p>
+  <div class="row">
+    <label class="btn2" style="display:inline-block;cursor:pointer;margin:0">
+      📥 Importar base de datos Excel
+      <input id="excelImportFile" type="file" accept=".xlsx,.xls,.csv" hidden onchange="importarExcel(this)">
+    </label>
+    <button type="button" class="btn2" onclick="descargarPlantillaExcel()">📋 Descargar plantilla</button>
+    <button type="button" class="ok" onclick="generarCredencialesExcel()">🎫 Generar credenciales de todos</button>
+  </div>
+  <div id="excelImportStatus" class="small muted" style="margin-top:8px">
+    Columnas reconocidas: Nombre del alumno, Grado, Grupo, Matrícula, Fecha de nacimiento,
+    Padre/Tutor, Teléfono tutor, Suplente, Teléfono suplente y Notas/Emergencia.
+  </div>
+</div>
+<div class="row"><h2 style="margin-right:auto">Alumnos</h2><input id="search" style="max-width:280px" placeholder="Buscar nombre o matrícula" oninput="renderStudents()"><button class="danger" onclick="deleteAllStudents()">Eliminar todos</button></div><div style="overflow:auto"><table><thead><tr><th>Alumno</th><th>Grado</th><th>Grupo</th><th>Matrícula</th><th>Foto</th><th></th></tr></thead><tbody id="studentTable"></tbody></table></div></div></div>
+</div>
+</section>
+
+<section id="diseno" class="tab">
+<div class="layout">
+<div class="card noPrint"><h2>Plantillas</h2><p class="small muted">Selecciona una plantilla para cambiar inmediatamente el estilo de la credencial. Hay diseños para uso escolar, institucional, corporativo, infantil y moderno.</p><div class="template-grid">
+<div class="tpl"><div class="mini" style="background:linear-gradient(135deg,#123c7a,#1e88e5)"></div><button class="btn2" onclick="setTemplate('Clasico')">Clásico</button></div>
+<div class="tpl"><div class="mini" style="background:linear-gradient(135deg,#0f766e,#14b8a6)"></div><button class="btn2" onclick="setTemplate('Verde')">Verde</button></div>
+<div class="tpl"><div class="mini" style="background:linear-gradient(135deg,#5b21b6,#a855f7)"></div><button class="btn2" onclick="setTemplate('Morado')">Morado</button></div>
+<div class="tpl"><div class="mini" style="background:linear-gradient(135deg,#111827,#4b5563)"></div><button class="btn2" onclick="setTemplate('Oscuro')">Oscuro</button></div>
+<div class="tpl"><div class="mini" style="background:linear-gradient(135deg,#b91c1c,#fb7185)"></div><button class="btn2" onclick="setTemplate('Rojo')">Rojo</button></div>
+<div class="tpl"><div class="mini" style="background:linear-gradient(135deg,#92400e,#f59e0b)"></div><button class="btn2" onclick="setTemplate('Dorado')">Dorado</button></div>
+<div class="tpl"><div class="mini" style="background:linear-gradient(135deg,#0369a1,#67e8f9)"></div><button class="btn2" onclick="setTemplate('Cielo')">Cielo</button></div>
+<div class="tpl"><div class="mini" style="background:linear-gradient(135deg,#166534,#86efac)"></div><button class="btn2" onclick="setTemplate('Naturaleza')">Naturaleza</button></div>
+<div class="tpl"><div class="mini" style="background:linear-gradient(135deg,#be185d,#f9a8d4)"></div><button class="btn2" onclick="setTemplate('Rosa')">Rosa</button></div>
+<div class="tpl"><div class="mini" style="background:linear-gradient(135deg,#4338ca,#818cf8)"></div><button class="btn2" onclick="setTemplate('AzulReal')">Azul real</button></div>
+<div class="tpl"><div class="mini" style="background:linear-gradient(135deg,#374151,#d1d5db)"></div><button class="btn2" onclick="setTemplate('Plata')">Plata</button></div>
+<div class="tpl"><div class="mini" style="background:linear-gradient(135deg,#7f1d1d,#f87171)"></div><button class="btn2" onclick="setTemplate('Granate')">Granate</button></div>
+<div class="tpl"><div class="mini" style="background:linear-gradient(135deg,#0f172a,#38bdf8);border-radius:18px"></div><button class="btn2" onclick="setTemplate('Tecnologico')">Tecnológico</button></div>
+<div class="tpl"><div class="mini" style="background:linear-gradient(135deg,#14532d,#facc15);border-radius:22px"></div><button class="btn2" onclick="setTemplate('Deportivo')">Deportivo</button></div>
+<div class="tpl"><div class="mini" style="background:linear-gradient(135deg,#f8fafc,#94a3b8);border:3px solid #334155"></div><button class="btn2" onclick="setTemplate('Elegante')">Elegante</button></div>
+<div class="tpl"><div class="mini" style="background:linear-gradient(135deg,#2563eb,#f8fafc);border-radius:28px"></div><button class="btn2" onclick="setTemplate('Infantil')">Infantil</button></div>
+<div class="tpl"><div class="mini" style="background:linear-gradient(135deg,#581c87,#ec4899);border-radius:50px"></div><button class="btn2" onclick="setTemplate('Creativo')">Creativo</button></div>
+<div class="tpl"><div class="mini" style="background:linear-gradient(135deg,#134e4a,#0f766e);border-radius:6px"></div><button class="btn2" onclick="setTemplate('Institucional')">Institucional</button></div>
+<div class="tpl"><div class="mini" style="background:linear-gradient(135deg,#111827,#d4af37);border-radius:10px"></div><button class="btn2" onclick="setTemplate('NegroDorado')">Negro y oro</button></div>
+<div class="tpl"><div class="mini" style="background:linear-gradient(135deg,#f8fafc,#c9a227);border:1px solid #c9a227;border-radius:10px"></div><button class="btn2" onclick="setTemplate('MarfilOro')">Marfil y oro</button></div>
+<div class="tpl"><div class="mini" style="background:linear-gradient(135deg,#172554,#bfdbfe);border-radius:14px"></div><button class="btn2" onclick="setTemplate('AzulEjecutivo')">Azul ejecutivo</button></div>
+<div class="tpl"><div class="mini" style="background:linear-gradient(135deg,#3f3f46,#e4e4e7);border-radius:5px"></div><button class="btn2" onclick="setTemplate('Grafito')">Grafito</button></div>
+<div class="tpl"><div class="mini" style="background:linear-gradient(135deg,#7c2d12,#fbbf24);border-radius:12px"></div><button class="btn2" onclick="setTemplate('CafeOro')">Café y oro</button></div>
+<div class="tpl"><div class="mini" style="background:linear-gradient(135deg,#164e63,#67e8f9);border-radius:16px"></div><button class="btn2" onclick="setTemplate('AzulAcero')">Azul acero</button></div>
+<div class="tpl"><div class="mini" style="background:linear-gradient(135deg,#ffffff,#dbeafe);border:2px dashed #123c7a"></div><button class="btn2" onclick="setTemplate('Personalizado')">Personalizado</button></div>
+<div class="tpl"><div class="mini" style="background:linear-gradient(135deg,#0f172a,#38bdf8);border-radius:18px"></div><button class="btn2" onclick="setTemplate('Moderno')">Moderno</button></div>
+<div class="tpl"><div class="mini" style="background:linear-gradient(135deg,#1d4ed8,#f8fafc);border-radius:10px;border:3px solid #1d4ed8"></div><button class="btn2" onclick="setTemplate('Escolar')">Escolar</button></div>
+<div class="tpl"><div class="mini" style="background:linear-gradient(135deg,#334155,#e2e8f0);border-radius:7px"></div><button class="btn2" onclick="setTemplate('Academico')">Académico</button></div>
+<div class="tpl"><div class="mini" style="background:linear-gradient(135deg,#312e81,#93c5fd);border-radius:14px"></div><button class="btn2" onclick="setTemplate('Universitario')">Universitario</button></div>
+<div class="tpl"><div class="mini" style="background:linear-gradient(135deg,#0f172a,#64748b);border-radius:8px"></div><button class="btn2" onclick="setTemplate('Corporativo')">Corporativo</button></div>
+<div class="tpl"><div class="mini" style="background:linear-gradient(135deg,#ffffff,#f1f5f9);border:1px solid #94a3b8;border-radius:3px"></div><button class="btn2" onclick="setTemplate('Minimalista')">Minimalista</button></div>
+<div class="tpl"><div class="mini" style="background:linear-gradient(135deg,#172554,#2563eb);border-radius:16px"></div><button class="btn2" onclick="setTemplate('Marino')">Azul marino</button></div>
+<div class="tpl"><div class="mini" style="background:linear-gradient(135deg,#064e3b,#34d399);border-radius:18px"></div><button class="btn2" onclick="setTemplate('Esmeralda')">Esmeralda</button></div>
+<div class="tpl"><div class="mini" style="background:linear-gradient(135deg,#450a0a,#be123c);border-radius:9px"></div><button class="btn2" onclick="setTemplate('Vino')">Vino</button></div>
+<div class="tpl"><div class="mini" style="background:linear-gradient(135deg,#1e293b,#67e8f9,#c4b5fd);border-radius:20px"></div><button class="btn2" onclick="setTemplate('Holografico')">Holográfico</button></div>
+<div class="tpl"><div class="mini" style="background:linear-gradient(135deg,#020617,#22d3ee);border-radius:20px"></div><button class="btn2" onclick="setTemplate('Tecnologia')">Tecnología</button></div>
+<div class="tpl"><div class="mini" style="background:linear-gradient(135deg,#fef3c7,#bfdbfe,#fbcfe8);border-radius:30px"></div><button class="btn2" onclick="setTemplate('InfantilPlus')">Infantil Plus</button></div>
+<div class="tpl"><div class="mini" style="background:repeating-linear-gradient(135deg,#f8fafc 0 12px,#dbeafe 12px 24px);border-radius:5px;border:3px solid #1e3a8a"></div><button class="btn2" onclick="setTemplate('Seguridad')">Seguridad</button></div>
+<div class="tpl"><div class="mini" style="background:linear-gradient(135deg,#f8fafc,#d1d5db);border-radius:4px;border:3px solid #374151"></div><button class="btn2" onclick="setTemplate('Oficial')">Oficial</button></div>
+</div>
+<p class="small muted">Diseños disponibles: clásicos, modernos, escolares, académicos, corporativos, infantiles, deportivos, tecnológicos, institucionales y premium.</p><hr><h3>Formato</h3>
+<label>Orientación</label><select id="dOrient" onchange="applyDesign()"><option value="land">Horizontal</option><option value="port">Vertical</option></select>
+<label style="margin-top:8px">Tamaño</label><select id="dSize" onchange="applyDesign()"><option value="standard">Estándar 86×54 mm</option><option value="small">Pequeña 80×50 mm</option><option value="large">Grande 90×60 mm</option><option value="custom70x100">70×100 mm</option></select>
+<label style="margin-top:8px">Color principal</label><input id="dPrimary" type="color" onchange="applyDesign()">
+<label style="margin-top:8px">Color acento</label><input id="dAccent" type="color" onchange="applyDesign()">
+<label style="margin-top:8px;font-size:15px">🎨 Fondo de la credencial</label>
+<div class="card" style="padding:10px;margin-top:6px;background:#f8fafc">
+  <label>Tipo de fondo</label>
+  <select id="dBgType" onchange="applyDesign()">
+    <option value="solid">Color sólido</option>
+    <option value="gradient">Degradado</option>
+    <option value="pattern">Patrón elegante</option>
+    <option value="waves">Ondas</option>
+    <option value="diagonal">Diagonal</option>
+    <option value="image">Imagen / fotografía</option>
+  </select>
+  <label style="margin-top:8px">Color principal del fondo</label>
+  <input id="dBgColor" type="color" onchange="applyDesign()">
+  <label style="margin-top:8px">Color secundario</label>
+  <input id="dBgColor2" type="color" onchange="applyDesign()">
+  <div id="bgGallery" class="bgGallery noPrint" style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px">
+    <button type="button" class="bgChoice" onclick="setGalleryBackground('azul')" style="height:55px;border:2px solid #1d4ed8;background:linear-gradient(135deg,#dbeafe,#1d4ed8);color:white">🔵 Azul</button>
+    <button type="button" class="bgChoice" onclick="setGalleryBackground('cielo')" style="height:55px;border:2px solid #38bdf8;background:linear-gradient(135deg,#e0f2fe,#38bdf8);color:#075985">☁️ Cielo</button>
+    <button type="button" class="bgChoice" onclick="setGalleryBackground('verde')" style="height:55px;border:2px solid #15803d;background:linear-gradient(135deg,#dcfce7,#15803d);color:white">🌿 Verde</button>
+    <button type="button" class="bgChoice" onclick="setGalleryBackground('turquesa')" style="height:55px;border:2px solid #0f766e;background:linear-gradient(135deg,#ccfbf1,#0f766e);color:white">🌊 Turquesa</button>
+    <button type="button" class="bgChoice" onclick="setGalleryBackground('rosa')" style="height:55px;border:2px solid #be185d;background:linear-gradient(135deg,#fce7f3,#be185d);color:white">🌸 Rosa</button>
+    <button type="button" class="bgChoice" onclick="setGalleryBackground('morado')" style="height:55px;border:2px solid #7e22ce;background:linear-gradient(135deg,#f3e8ff,#7e22ce);color:white">🟣 Morado</button>
+    <button type="button" class="bgChoice" onclick="setGalleryBackground('oro')" style="height:55px;border:2px solid #b7791f;background:linear-gradient(135deg,#fff7cc,#b7791f);color:#4a3300">✨ Oro</button>
+    <button type="button" class="bgChoice" onclick="setGalleryBackground('rojo')" style="height:55px;border:2px solid #b91c1c;background:linear-gradient(135deg,#fee2e2,#b91c1c);color:white">🔴 Rojo</button>
+    <button type="button" class="bgChoice" onclick="setGalleryBackground('gris')" style="height:55px;border:2px solid #4b5563;background:linear-gradient(135deg,#f3f4f6,#4b5563);color:white">⚙️ Grafito</button>
+    <button type="button" class="bgChoice" onclick="setGalleryBackground('navidad')" style="height:55px;border:2px solid #166534;background:linear-gradient(135deg,#dcfce7 0 50%,#fee2e2 50%);color:#166534">🎄 Festivo</button>
+    <button type="button" class="bgChoice" onclick="setGalleryBackground('infantil')" style="height:55px;border:2px solid #f59e0b;background:linear-gradient(135deg,#fef3c7,#bfdbfe,#fbcfe8);color:#713f12">🎈 Infantil</button>
+    <button type="button" class="bgChoice" onclick="setGalleryBackground('ondas')" style="height:55px;border:2px solid #2563eb;background:radial-gradient(ellipse at 20% 0%,transparent 0 40%,#93c5fd 42% 48%,transparent 50%),#eff6ff;color:#1e40af">〰️ Ondas</button>
+  </div>
+  <div class="small muted" style="margin-top:7px">Haz clic en cualquier fondo para aplicarlo inmediatamente.</div>
+  <h4 style="margin:14px 0 8px">🏛️ Fondos profesionales</h4>
+  <div id="proBgGallery" class="bgGallery noPrint" style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">
+    <button type="button" class="bgChoice" onclick="setProBackground('corporativo')" style="height:62px;border:2px solid #1e3a8a;background:linear-gradient(135deg,#eff6ff,#1e3a8a);color:white">🏢<br>Corporativo</button>
+    <button type="button" class="bgChoice" onclick="setProBackground('ejecutivo')" style="height:62px;border:2px solid #0f172a;background:linear-gradient(135deg,#f8fafc,#0f172a);color:white">💼<br>Ejecutivo</button>
+    <button type="button" class="bgChoice" onclick="setProBackground('azulmarino')" style="height:62px;border:2px solid #172554;background:linear-gradient(135deg,#dbeafe,#172554);color:white">🔷<br>Azul marino</button>
+    <button type="button" class="bgChoice" onclick="setProBackground('azulplata')" style="height:62px;border:2px solid #475569;background:linear-gradient(135deg,#f8fafc,#64748b);color:white">⚙️<br>Azul plata</button>
+    <button type="button" class="bgChoice" onclick="setProBackground('negrooro')" style="height:62px;border:2px solid #a16207;background:linear-gradient(135deg,#09090b,#d4af37);color:white">👑<br>Negro oro</button>
+    <button type="button" class="bgChoice" onclick="setProBackground('marfiloro')" style="height:62px;border:2px solid #a16207;background:linear-gradient(135deg,#fffdf5,#c9a227);color:#5b4300">✨<br>Marfil oro</button>
+    <button type="button" class="bgChoice" onclick="setProBackground('verdeinstitucional')" style="height:62px;border:2px solid #065f46;background:linear-gradient(135deg,#ecfdf5,#065f46);color:white">🏛️<br>Institucional</button>
+    <button type="button" class="bgChoice" onclick="setProBackground('verdeesmeralda')" style="height:62px;border:2px solid #047857;background:linear-gradient(135deg,#d1fae5,#047857);color:white">💎<br>Esmeralda</button>
+    <button type="button" class="bgChoice" onclick="setProBackground('vino')" style="height:62px;border:2px solid #7f1d1d;background:linear-gradient(135deg,#fff1f2,#7f1d1d);color:white">🍷<br>Vino</button>
+    <button type="button" class="bgChoice" onclick="setProBackground('antracita')" style="height:62px;border:2px solid #27272a;background:linear-gradient(135deg,#18181b,#71717a);color:white">⬛<br>Antracita</button>
+    <button type="button" class="bgChoice" onclick="setProBackground('platino')" style="height:62px;border:2px solid #94a3b8;background:linear-gradient(135deg,#ffffff,#cbd5e1);color:#334155">◻️<br>Platino</button>
+    <button type="button" class="bgChoice" onclick="setProBackground('azulgeometrico')" style="height:62px;border:2px solid #2563eb;background:repeating-linear-gradient(135deg,#eff6ff 0 12px,#bfdbfe 12px 24px,#1d4ed8 24px 26px);color:#102a56">▱<br>Geométrico</button>
+    <button type="button" class="bgChoice" onclick="setProBackground('lineasfinas')" style="height:62px;border:2px solid #64748b;background:repeating-linear-gradient(0deg,#f8fafc 0 10px,#e2e8f0 10px 11px);color:#334155">☰<br>Líneas finas</button>
+    <button type="button" class="bgChoice" onclick="setProBackground('malla')" style="height:62px;border:2px solid #334155;background:radial-gradient(circle at 1px 1px,#64748b 1px,transparent 1.5px),#f8fafc;background-size:12px 12px;color:#334155">⌘<br>Malla</button>
+    <button type="button" class="bgChoice" onclick="setProBackground('ondaazul')" style="height:62px;border:2px solid #1d4ed8;background:radial-gradient(ellipse at 10% 100%,transparent 0 45%,#93c5fd 46% 50%,transparent 51%),linear-gradient(135deg,#f8fbff,#dbeafe);color:#1e40af">〰️<br>Onda azul</button>
+    <button type="button" class="bgChoice" onclick="setProBackground('universitario')" style="height:62px;border:2px solid #3730a3;background:linear-gradient(135deg,#eef2ff 0 55%,#3730a3 55% 100%);color:white">🎓<br>Universitario</button>
+    <button type="button" class="bgChoice" onclick="setProBackground('minimal')" style="height:62px;border:2px solid #cbd5e1;background:linear-gradient(135deg,#ffffff,#f1f5f9);color:#334155">◯<br>Minimalista</button>
+  </div>
+
+<div class="toolbar noPrint" style="margin-top:8px">
+    <button type="button" class="btn2" onclick="setBackgroundPreset('blanco')">⬜ Blanco</button>
+    <button type="button" class="btn2" onclick="setBackgroundPreset('azul')">🔵 Azul</button>
+    <button type="button" class="btn2" onclick="setBackgroundPreset('verde')">🟢 Verde</button>
+    <button type="button" class="btn2" onclick="setBackgroundPreset('rosa')">🌸 Rosa</button>
+    <button type="button" class="btn2" onclick="setBackgroundPreset('premium')">✨ Premium</button>
+  </div>
+  <label style="margin-top:8px">Subir imagen como fondo</label>
+  <input id="dBgImage" type="file" accept="image/*" onchange="loadBackgroundImage(this)">
+  <button type="button" class="btn2 noPrint" style="margin-top:6px" onclick="removeBackgroundImage()">🗑️ Quitar imagen de fondo</button>
+  <div id="bgStatus" class="small muted" style="margin-top:6px">El fondo se aplica inmediatamente a la credencial.</div>
+</div>
+<label style="margin-top:8px">Marco de la credencial</label>
+<select id="dFrame" onchange="applyDesign()">
+<option value="classic">Clásico</option>
+<option value="double">Doble</option>
+<option value="gold">Dorado</option>
+<option value="none">Sin marco</option>
+</select>
+
+<label style="margin-top:8px">Forma de fotografía</label>
+<select id="dPhotoShape" onchange="applyDesign()">
+<option value="square">Cuadrada</option>
+<option value="round">Circular</option>
+<option value="oval">Ovalada</option>
+<option value="rounded">Redondeada</option>
+</select>
+
+<div class="card noPrint" style="margin-top:10px;padding:10px;background:#f8fafc;border:1px dashed #b8c4d6">
+  <h4 style="margin:0 0 8px">📷 Ajustar fotografía dentro del marco</h4>
+  <p class="small muted" style="margin:0 0 8px">Selecciona un alumno y mueve la foto dentro del óvalo. Ajusta zoom y posición sin cambiar el tamaño del marco.</p>
+  <label>Zoom <span id="photoZoomValue">100%</span></label>
+  <input id="photoZoom" type="range" min="80" max="220" value="100" step="1" oninput="adjustPhoto('zoom',this.value)">
+  <div class="grid" style="margin-top:6px">
+    <div class="col6"><label>Horizontal <span id="photoXValue">0%</span></label><input id="photoX" type="range" min="-100" max="100" value="0" step="1" oninput="adjustPhoto('x',this.value)"></div>
+    <div class="col6"><label>Vertical <span id="photoYValue">0%</span></label><input id="photoY" type="range" min="-100" max="100" value="0" step="1" oninput="adjustPhoto('y',this.value)"></div>
+  </div>
+  <div class="row" style="margin-top:7px">
+    <button type="button" class="btn2" onclick="nudgePhoto(-5,0)">⬅️</button>
+    <button type="button" class="btn2" onclick="nudgePhoto(5,0)">➡️</button>
+    <button type="button" class="btn2" onclick="nudgePhoto(0,-5)">⬆️</button>
+    <button type="button" class="btn2" onclick="nudgePhoto(0,5)">⬇️</button>
+    <button type="button" class="btn2" onclick="resetPhotoAdjust()">↺ Restablecer foto</button>
+  </div>
+</div>
+
+<div class="grid" style="margin-top:8px">
+  <div class="col6"><label>Tamaño del logotipo 1</label><input id="dLogoSize" type="range" min="25" max="110" value="58" oninput="applyDesign()"></div>
+  <div class="col6"><label>Tamaño del logotipo 2</label><input id="dLogo2Size" type="range" min="25" max="110" value="48" oninput="applyDesign()"></div>
+  <div class="col6"><label>Forma de los logotipos</label><select id="dLogoShape" onchange="applyDesign()"><option value="square">Cuadrada</option><option value="round">Circular</option><option value="rounded">Redondeada</option></select></div>
+</div>
+<p class="small muted">En el editor puedes seleccionar el logotipo y arrastrarlo. Usa el punto rojo de la esquina para ajustar su tamaño.</p>
+
+<hr><h3>Editor visual</h3><p class="small muted">Selecciona un alumno para diseñar viendo sus datos y fotografía reales. Haz clic en un elemento y arrástralo. Usa la esquina roja para cambiar su tamaño.</p>
+<label style="margin-top:8px">Alumno para previsualización</label><select id="designStudent" onchange="selectDesignStudent(this.value)"></select><div id="designStudentInfo" class="small muted" style="margin-top:6px">Vista de muestra</div>
+<div class="row"><button class="btn2" onclick="rotatePreview()">↻ Girar</button><button class="btn2" onclick="centerSelected()">Centrar seleccionado</button><button class="btn2" onclick="resetLayout()">↺ Restablecer posiciones</button><button class="btn2" onclick="selectLogoElement()">🏫 Seleccionar logo</button><button class="btn2" onclick="setBackgroundPreset('clean')">⬜ Fondo limpio</button><button class="btn2" onclick="setBackgroundPreset('premium')">✨ Fondo premium</button><button class="btn" onclick="saveDesign()">Guardar diseño</button><button type="button" class="btn2" onclick="verificarQRAlumno()">🔎 Ver datos del QR</button><button class="ok" onclick="applyDesignToAll()">Aplicar a todos</button></div>
+</div>
+<div class="card"><div class="toolbar noPrint"><button class="btn2" onclick="frontBack='front';renderPreview()">Frente</button><button class="btn2" onclick="frontBack='back';renderPreview()">Reverso</button><button class="btn" onclick="printCurrent()">🖨️ Imprimir</button></div><div class="row noPrint" style="margin-bottom:10px">
+<button id="generarCredencialPrincipal" type="button" class="btn" onclick="generarCredencialPrincipal()" style="font-size:18px;font-weight:800;padding:14px 22px;">🎫 Generar credencial</button>
+</div>
+<div class="editor"><div id="credPreview" class="cred land"></div></div></div>
+</div>
+</section>
+
+<section id="impresion" class="tab">
+<div class="card"><h2>Impresión y PDF</h2><p class="small muted">Si el navegador bloquea la descarga automática, la aplicación abrirá la impresión para seleccionar <b>Guardar como PDF</b>.</p><div class="grid">
+<div class="col4"><label>Alumno</label><select id="printStudent"></select></div><div class="col4"><label>Copias</label><input id="printCopies" type="number" min="1" max="100" value="1"></div><div class="col4"><label>Credenciales por hoja</label><select id="perSheet"><option value="1">1</option><option value="2">2</option><option value="4">4</option>
+<option value="2" selected>2</option><option value="6">6</option><option value="8">8</option></select></div>
+</div><div class="row" style="margin-top:12px"><div class="col4"><label>Doble cara</label><select id="duplexMode"><option value="long" selected>Voltear por borde largo</option><option value="short">Voltear por borde corto</option><option value="single">Solo frente</option></select></div><div class="col4"><label>Guías de corte</label><select id="cropMarks"><option value="yes" selected>Sí</option><option value="no">No</option></select></div><div class="col4"><label>Separación</label><select id="printGap"><option value="4">4 mm</option><option value="6" selected>6 mm</option><option value="8">8 mm</option><option value="10">10 mm</option></select></div></div><div class="row" style="margin-top:12px"><button class="btn" onclick="printSelected()">🖨️ Imprimir alumno</button><button type="button" class="btn" onclick="exportarExcel()" title="Descargar los datos de alumnos en Excel">📊 Exportar Excel</button>
+<button class="ok" onclick="downloadSelectedPDF()">📄 GENERAR PDF — FRENTE + REVERSO</button><button class="ok" onclick="downloadAllPDF()">📄 GENERAR PDF DE TODOS</button><button class="btn2" onclick="printAll()">🖨️ Imprimir todos</button><button class="btn2" onclick="printBlank()">Imprimir muestra</button></div><p class="small muted">La impresión se prepara en hojas separadas de frente y reverso con las mismas coordenadas. Para impresión dúplex, usa “borde largo” o “borde corto” según la orientación de tu impresora.</p></div>
+<div id="printArea" class="printArea"></div>
+</section>
+
+<section id="seguridad" class="tab">
+<div class="card"><h2>👥 Administración de usuarios</h2><p>Los usuarios se autentican con Supabase. Aquí puedes consultar y cambiar el rol de los usuarios existentes.</p>
+<div class="row"><button class="btn" onclick="loadUsers()">🔄 Actualizar usuarios</button><button class="btn2" onclick="showUserHelp()">ℹ️ Cómo crear usuarios</button></div>
+<div style="overflow:auto;margin-top:14px"><table><thead><tr><th>Usuario</th><th>Rol</th><th>Último acceso</th><th>Acción</th></tr></thead><tbody id="usersTable"><tr><td colspan="4" class="muted">Configura la nube e inicia sesión como Administrador.</td></tr></tbody></table></div>
+<hr><h3>Roles</h3><div class="grid"><div class="col3"><b>Administrador</b><div class="small muted">Control total y usuarios.</div></div><div class="col3"><b>Director</b><div class="small muted">Alumnos, diseño e impresión.</div></div><div class="col3"><b>Capturista</b><div class="small muted">Captura y edición de alumnos.</div></div><div class="col3"><b>Consulta</b><div class="small muted">Solo lectura.</div></div></div>
+<p class="small muted" style="margin-top:14px">Las contraseñas no se almacenan en esta aplicación. La creación de cuentas se realiza en Supabase Auth.</p></div>
+</section>
+
+<section id="nube" class="tab">
+<div class="card"><h2>☁️ Conexión con la nube</h2>
+<p><b>Supabase:</b> conecta esta aplicación para compartir alumnos, fotografías, tutores, logos, firma y diseño entre computadora y celular.</p>
+<div class="grid"><div class="col6"><label>URL del proyecto Supabase</label><input id="sbUrl" placeholder="https://xxxxxxxx.supabase.co"></div><div class="col6"><label>Clave pública (anon)</label><input id="sbKey" placeholder="Clave pública anon"></div></div>
+<div class="row" style="margin-top:12px"><button class="btn" onclick="openCloudConfig()">⚙️ Configurar conexión</button><button class="btn2" onclick="cloudPull(true)">⬇️ Descargar datos</button><button class="btn2" onclick="cloudPush(true)">⬆️ Subir datos</button></div>
+<p id="cloudInfo" class="small muted"></p>
+<div class="card" style="margin-top:14px;background:#f7f9fc"><b>Seguridad:</b> usa únicamente la clave pública <i>anon</i>. Nunca introduzcas la clave <b>service_role</b> en el navegador. Ejecuta el archivo <b>schema.sql</b> del paquete antes de usar la nube.</div></div></section>
+<section id="respaldo" class="tab">
+<div class="card"><h2>Respaldo y recuperación</h2><div class="row"><button class="btn" onclick="exportJSON()">💾 Exportar respaldo JSON</button><label class="btn2" style="display:inline-block">📥 Importar JSON<input id="importFile" type="file" accept=".json,application/json" hidden onchange="importJSON(this)"></label></div><p class="small muted">El respaldo incluye escuela, alumnos y diseño. Las fotografías y firmas se guardan dentro del archivo JSON.</p></div>
+</section>
+</main>
+</div>
+
+<div id="modal" class="modal"><div class="modalBox"><h2 id="modalTitle">Confirmar</h2><p id="modalText"></p><div class="row right"><button class="btn2" onclick="closeModal()">Cancelar</button><button class="danger" id="modalOk">Confirmar</button></div></div></div>
+
+<script>
+const CLOUD_CFG_KEY='credenschool_cloud_cfg_v2';
+let sb=null, sbUser=null, cloudBusy=false;
+function getCloudCfg(){try{return JSON.parse(localStorage.getItem(CLOUD_CFG_KEY)||'null')}catch(e){return null}}
+function setCloudStatus(t){const a=document.getElementById('cloudStatus');if(a)a.textContent=t;const b=document.getElementById('cloudInfo');if(b)b.textContent=t}
+function initCloud(){
+  const c=getCloudCfg();
+  if(!c?.url||!c?.key){setCloudStatus('💻 Modo local. Configura Supabase en la pestaña ☁️ Nube para sincronizar.');return false;}
+  try{
+    if(!window.supabase?.createClient) throw new Error('No se cargó la librería de Supabase. Abre la aplicación con internet.');
+    sb=window.supabase.createClient(c.url,c.key,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
+    sb.auth.getSession().then(({data})=>{sbUser=data?.session?.user||null;setCloudStatus(sbUser?'☁️ Conectado a Supabase.':'☁️ Supabase configurado. Inicia sesión para sincronizar.');}).catch(()=>{});
+    sb.auth.onAuthStateChange((_event,session)=>{sbUser=session?.user||null;setCloudStatus(sbUser?'☁️ Sesión en la nube activa.':'☁️ Sin sesión en la nube.');});
+    return true;
+  }catch(e){console.warn(e);setCloudStatus('⚠️ No se pudo iniciar Supabase: '+e.message);return false;}
+}
+function openCloudConfig(){
+  const c=getCloudCfg()||{};
+  const url=prompt('Pega la URL de tu proyecto Supabase (https://xxxx.supabase.co):',c.url||'');
+  if(url===null)return;
+  const key=prompt('Pega la clave pública anon de Supabase:',c.key||'');
+  if(key===null)return;
+  saveCloudConfig(url.trim(),key.trim());
+}
+function saveCloudConfig(url,key){
+  if(!/^https:\/\/[^\s]+\.supabase\.co\/?$/.test(url)){alert('La URL no parece una URL válida de Supabase. Debe ser https://TU-PROYECTO.supabase.co');return false;}
+  if(!key || key.length<20){alert('La clave pública anon parece incompleta.');return false;}
+  localStorage.setItem(CLOUD_CFG_KEY,JSON.stringify({url:url.replace(/\/$/,''),key}));
+  const ok=initCloud();
+  if(ok){alert('Conexión guardada. Ahora crea/inicia el usuario en Supabase y entra con ese correo y contraseña.');}
+  return ok;
+}
+async function cloudLogin(email,password){
+  if(!sb) throw new Error('Supabase no está inicializado. Verifica la conexión.');
+  // Evita que un navegador/archivo local quede indefinidamente en "Entrando…".
+  const timeout = (promise, ms, message) => Promise.race([
+    promise,
+    new Promise((_, reject)=>setTimeout(()=>reject(new Error(message)), ms))
+  ]);
+
+  const authResult = await timeout(
+    sb.auth.signInWithPassword({email,password}),
+    12000,
+    'Supabase no respondió a tiempo. Comprueba tu conexión a Internet.'
+  );
+
+  const {data,error}=authResult;
+  if(error) throw error;
+  if(!data?.user) throw new Error('Supabase no devolvió un usuario válido.');
+
+  sbUser=data.user;
+  db.access=db.access||{};
+  db.access.user=email;
+  db.access.pass='';
+
+  // El perfil y los datos de la escuela se cargan en segundo plano.
+  // Así el acceso no queda bloqueado esperando la consulta de app_data.
+  (async()=>{
+    try{
+      const r = await timeout(
+        sb.from('profiles').select('role').eq('id',sbUser.id).maybeSingle(),
+        8000,
+        'No se pudo consultar el perfil a tiempo.'
+      );
+      if(r.error) throw r.error;
+      db.access.role=r.data?.role||'Consulta';
+      persist();
+      if(typeof applyRoleUI==='function') applyRoleUI();
+    }catch(e){
+      console.warn('Perfil Supabase:',e);
+      db.access.role=db.access.role||'Consulta';
+      persist();
+    }
+    try{
+      await timeout(cloudPull(false),10000,'La descarga de datos de la nube tardó demasiado.');
+    }catch(e){
+      console.warn('cloudPull en segundo plano:',e);
+    }
+  })();
+
+  return true;
+}
+async function cloudPull(show){
+  if(!sb||!sbUser){if(show)alert('Primero configura Supabase e inicia sesión.');return false;}
+  if(cloudBusy)return false; cloudBusy=true;
+  try{
+    const cct=String(db.school?.cct||'04DPR0515Q').trim();
+    const {data,error}=await sb.from('app_data').select('payload,updated_at').eq('school_cct',cct).maybeSingle();
+    if(error)throw error;
+    if(data?.payload){
+      const remote=data.payload;
+      if(remote.school&&Array.isArray(remote.students)&&remote.design){
+        db=remote; db.access=db.access||{user:sbUser.email,role:'Consulta',pass:''};
+        db.access.user=sbUser.email; db.access.pass=''; persist();
+        loadSchool?.(); renderAll?.(); renderPreview?.();
+        setCloudStatus('☁️ Datos descargados desde la nube · '+new Date(data.updated_at).toLocaleString());
+      }
+    }else if(show){alert('No hay datos guardados en la nube para el CCT '+cct+'. Puedes usar “Subir datos” para crear el primer respaldo.');}
+    return true;
+  }catch(e){console.error('cloudPull',e);if(show)alert('No se pudieron descargar los datos: '+e.message);return false;}
+  finally{cloudBusy=false;}
+}
+async function cloudPush(show){
+  if(!sb||!sbUser){if(show)alert('Primero configura Supabase e inicia sesión.');return false;}
+  if(cloudBusy)return false; cloudBusy=true;
+  try{
+    const cct=String(db.school?.cct||'04DPR0515Q').trim();
+    const payload=JSON.parse(JSON.stringify(db));
+    payload.access=payload.access||{};payload.access.pass='';payload.access.user=sbUser.email;payload.access.role=db.access?.role||'Consulta';
+    const row={school_cct:cct,payload,updated_by:sbUser.id};
+    const {error}=await sb.from('app_data').upsert(row,{onConflict:'school_cct'});
+    if(error)throw error;
+    setCloudStatus('☁️ Datos subidos correctamente · '+new Date().toLocaleString());
+    if(show)alert('Datos guardados en la nube correctamente.');
+    return true;
+  }catch(e){console.error('cloudPush',e);if(show)alert('No se pudieron subir los datos: '+e.message);return false;}
+  finally{cloudBusy=false;}
+}
+async function cloudLogout(){if(sb){try{await sb.auth.signOut()}catch(e){}}sbUser=null;}
+
+async function syncCloudAfterSave(){
+  if(sb&&sbUser){try{await cloudPush(false)}catch(e){console.warn(e)}}
+}
+initCloud();
+const KEY='credenschool_pro_plus_v1';
+const DEFAULT_DB={
+ access:{user:'admin',pass:'admin123',role:'Administrador'},
+ school:{name:'ESCUELA PABLO GALEANA T.V.',cct:'04DPR0515Q',cycle:'2026-2027',shift:'Vespertino',director:'JULIO CESAR COB DZUL',phone:'',address:'',logo:'',logo2:'',signature:''},
+ students:[], design:{template:'Clasico',orientation:'land',size:'standard',primary:'#123c7a',accent:'#f0a500',photoShape:'square',logoSize:58,logo2Size:48,logoShape:'square',bgType:'solid',bgColor:'#ffffff',bgColor2:'#eaf0ff',frame:'classic',frontBack:'front', elements:{},bgImage:''}
+};
+let db;
+try{
+  const saved=localStorage.getItem(KEY);
+  db=saved?JSON.parse(saved):null;
+}catch(e){
+  db=null;
+  try{localStorage.removeItem(KEY)}catch(_){}
+}
+if(!db || typeof db!=='object') db=JSON.parse(JSON.stringify(DEFAULT_DB));
+if(!db.access) db.access={user:'admin',pass:'admin123',role:'Administrador'};
+if(!db.school) db.school=JSON.parse(JSON.stringify(DEFAULT_DB.school));
+if(!Array.isArray(db.students)) db.students=[];
+if(!db.design) db.design=JSON.parse(JSON.stringify(DEFAULT_DB.design));
+if(!db.school) db.school=JSON.parse(JSON.stringify(DEFAULT_DB.school));
+if(!db.school.director) db.school.director='JULIO CESAR COB DZUL';
+let currentUser=null, frontBack='front', selectedEl=null, drag=null, resize=null, selectedDesignStudentId='', cameraStream=null, capturedPhoto='', pendingStudentPhoto='', tutorCameraStream=null, tutorCapturedPhoto='', pendingTutorPhoto='';
+function elementStyle(side,k,base){const z=db.design.elements?.[side]?.[k]||{};let out=base||'';if(z.left!=null)out+=`left:${z.left}px!important;`;if(z.top!=null)out+=`top:${z.top}px!important;`;if(z.width!=null)out+=`width:${z.width}px!important;`;if(z.height!=null)out+=`height:${z.height}px!important;`;if(z.transform)out+=`transform:${z.transform};`;return out}
+function saveElementState(side,k,el){db.design.elements=db.design.elements||{};db.design.elements[side]=db.design.elements[side]||{};const z=db.design.elements[side][k]||{};z.left=el.offsetLeft;z.top=el.offsetTop;if(el.style.width)z.width=el.offsetWidth;if(el.style.height)z.height=el.offsetHeight;if(el.style.transform)z.transform=el.style.transform;else delete z.transform;db.design.elements[side][k]=z;}
+
+
+function persist(){
+  try{localStorage.setItem(KEY,JSON.stringify(db));}
+  catch(e){console.warn('No se pudo guardar en localStorage; la captura sigue disponible.',e);}
+  if(sb&&sbUser) syncCloudAfterSave();
+}
+document.getElementById('lgPass')?.addEventListener('keydown',e=>{if(e.key==='Enter')doLogin()});
+document.getElementById('lgUser')?.addEventListener('keydown',e=>{if(e.key==='Enter')doLogin()});
+async function doLogin(){
+  const u=(document.getElementById('lgUser')?.value||'').trim();
+  const p=(document.getElementById('lgPass')?.value||'').trim();
+  const err=document.getElementById('lgErr');
+  if(!u||!p){if(err)err.textContent='Escribe usuario/correo y contraseña.';return false;}
+  try{
+    if(sb){
+      await cloudLogin(u,p);
+    }else{
+      const savedUser=String(db?.access?.user||'admin').trim()||'admin';
+      const savedPass=String(db?.access?.pass||'admin123').trim()||'admin123';
+      if(u.toLowerCase()!==savedUser.toLowerCase()||p!==savedPass){if(err)err.textContent='Usuario o contraseña incorrectos.';return false;}
+      currentUser=savedUser;
+    }
+    if(err)err.textContent='';
+    const login=document.getElementById('login'),app=document.getElementById('app');
+    if(login){login.style.display='none';login.style.visibility='hidden';login.style.pointerEvents='none';}
+    if(app){app.style.display='block';app.style.visibility='visible';app.style.opacity='1';app.style.pointerEvents='auto';}
+    try{if(typeof loadSchool==='function')loadSchool();if(typeof applyRoleUI==='function')applyRoleUI();if(typeof renderAll==='function')renderAll();}catch(e){console.error(e)}
+    if(sb&&sbUser){await cloudPull(false);applyRoleUI?.();renderAll?.();renderPreview?.();}
+    const pass=document.getElementById('lgPass');if(pass)pass.value='';
+    return true;
+  }catch(e){console.error('Login:',e);if(err)err.textContent=e?.message||'No se pudo iniciar sesión en la nube.';return false;}
+}
+function cambiarContrasena(){
+  var actual=prompt('Escribe la contraseña actual:');
+  if(actual===null)return;
+  if(actual!=='admin123'){alert('Contraseña actual incorrecta.');return;}
+  var nueva=prompt('Escribe la nueva contraseña (mínimo 6 caracteres):');
+  if(nueva===null)return;
+  nueva=String(nueva).trim();
+  if(nueva.length<6){alert('La contraseña debe tener al menos 6 caracteres.');return;}
+  db.access=db.access||{};db.access.user='admin';db.access.pass=nueva;db.access.role='Administrador';persist();
+  alert('Contraseña cambiada correctamente.\n\nUsuario: admin\nUsa la nueva contraseña para entrar.');
+}
+function resetAccess(){
+  db.access={user:'admin',pass:'admin123',role:'Administrador'};
+  try{
+    localStorage.setItem(KEY, JSON.stringify(db));
+    localStorage.removeItem('CredenSchool_login_ok');
+  }catch(e){}
+  const u=document.getElementById('lgUser');
+  const p=document.getElementById('lgPass');
+  const e=document.getElementById('lgErr');
+  if(u) u.value='admin';
+  if(p) p.value='';
+  if(e) e.textContent='Acceso restablecido. Presiona Entrar.';
+  alert('Acceso restablecido correctamente.\\n\\nUsuario: admin\\nContraseña: admin123');
+}
+async function logout(){await cloudLogout();location.reload()}
+function go(id){document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));document.querySelectorAll('nav button').forEach(x=>x.classList.remove('active'));document.getElementById(id).classList.add('active');document.querySelector('nav button[data-tab="'+id+'"]').classList.add('active');if(id==='diseno')renderPreview();if(id==='impresion')renderPrintSelect();}
+document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>go(b.dataset.tab));
+function can(action){const r=db.access?.role||'Consulta';const map={view:true,students:['Administrador','Director','Capturista'].includes(r),design:['Administrador','Director'].includes(r),school:['Administrador','Director'].includes(r),print:['Administrador','Director','Capturista','Consulta'].includes(r),security:r==='Administrador',reset:r==='Administrador'};return !!map[action]}
+function applyRoleUI(){const r=db.access?.role||'Consulta';document.getElementById('roleBadge').textContent=r;document.querySelectorAll('nav button[data-tab="seguridad"]').forEach(b=>b.style.display=r==='Administrador'?'':'none');document.querySelectorAll('nav button[data-tab="escuela"]').forEach(b=>b.style.display=['Administrador','Director'].includes(r)?'':'none');document.querySelectorAll('nav button[data-tab="diseno"]').forEach(b=>b.style.display=['Administrador','Director'].includes(r)?'':'none');document.querySelectorAll('#alumnos .danger').forEach(b=>b.style.display=['Administrador','Director','Capturista'].includes(r)?'':'none');}
+async function loadUsers(){if(!sbUser||!can('security')){alert('Solo el Administrador puede administrar usuarios.');return}const t=document.getElementById('usersTable');t.innerHTML='<tr><td colspan="4">Cargando…</td></tr>';const r=await sb.from('profiles').select('id,role,created_at').order('created_at',{ascending:true});if(r.error){t.innerHTML='<tr><td colspan="4">Error: '+esc(r.error.message)+'</td></tr>';return}if(!r.data.length){t.innerHTML='<tr><td colspan="4" class="muted">No hay perfiles.</td></tr>';return}t.innerHTML=r.data.map(x=>`<tr><td><code>${esc(x.id)}</code></td><td><select onchange="changeRole('${x.id}',this.value)"><option ${x.role==='Administrador'?'selected':''}>Administrador</option><option ${x.role==='Director'?'selected':''}>Director</option><option ${x.role==='Capturista'?'selected':''}>Capturista</option><option ${x.role==='Consulta'?'selected':''}>Consulta</option></select></td><td>${x.created_at?new Date(x.created_at).toLocaleString():''}</td><td><button class="btn2" onclick="changeRole('${x.id}',this.previousElementSibling?.value)">Guardar</button></td></tr>`).join('')}
+async function changeRole(id,role){if(!sbUser||!can('security'))return;const r=await sb.from('profiles').update({role}).eq('id',id);if(r.error){alert('No se pudo cambiar el rol: '+r.error.message);return}setCloudStatus('☁️ Rol actualizado.');loadUsers()}
+function showUserHelp(){alert('Para crear un usuario: Supabase → Authentication → Users → Add user. Después vuelve aquí y asigna su rol. Nunca compartas la clave service_role ni la guardes en este archivo.')}
+function esc(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function loadSchool(){let s=db.school; sName.value=s.name;sCct.value=s.cct;sCycle.value=s.cycle;sShift.value=s.shift;sDirector.value=s.director;sPhone.value=s.phone;sAddress.value=s.address;schoolHeader.textContent=s.name;const lp=document.getElementById('schoolLogoPreview');if(lp)lp.innerHTML=s.logo?`<img src="${s.logo}" alt="Logotipo guardado" style="width:70px;height:70px;object-fit:contain;border:1px solid #dbe2ea;border-radius:8px;padding:4px"><br><span>Logotipo guardado y listo para la credencial</span>`:'Sin logotipo cargado'}
+function saveSchool(){db.school.name=sName.value.trim()||db.school.name;db.school.cct=sCct.value;db.school.cycle=sCycle.value;db.school.shift=sShift.value;db.school.director=sDirector.value;db.school.phone=sPhone.value;db.school.address=sAddress.value;let f=sLogo.files[0],f2=document.getElementById('sLogo2')?.files?.[0],g=sSignature.files[0];
+Promise.all([f?fileData(f):null,f2?fileData(f2):null,g?fileData(g):null]).then(v=>{
+ if(v[0])db.school.logo=v[0];
+ if(v[1])db.school.logo2=v[1];
+ if(v[2])db.school.signature=v[2];
+ persist();loadSchool();alert('Datos guardados.')
+})}
+function fileData(f){return new Promise(r=>{let q=new FileReader();q.onload=()=>r(q.result);q.readAsDataURL(f)})}
+async function openCamera(){
+  const video=document.getElementById('cameraVideo'), canvas=document.getElementById('cameraCanvas');
+  const status=document.getElementById('cameraStatus');
+  if(!navigator.mediaDevices?.getUserMedia){alert('Este navegador no permite acceder a la cámara. Puedes subir una fotografía existente.');return}
+  try{
+    if(cameraStream) cameraStream.getTracks().forEach(t=>t.stop());
+    cameraStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:'user'},width:{ideal:1280},height:{ideal:960}},audio:false});
+    video.srcObject=cameraStream; video.style.display='block'; canvas.style.display='none';
+    document.getElementById('takePhotoBtn').style.display='inline-block';
+    document.getElementById('retakePhotoBtn').style.display='none'; document.getElementById('usePhotoBtn').style.display='none'; document.getElementById('closeCameraBtn').style.display='inline-block';
+    status.textContent='Cámara activa. Coloca al alumno y toma la fotografía.';
+  }catch(e){cameraStream=null;status.textContent='No se pudo abrir la cámara. Puedes usar el botón de fotografía.';
+    alert('No fue posible abrir la cámara.\\n\\nEn computadora, esta función requiere permiso del navegador y normalmente funciona al abrir la aplicación mediante localhost o HTTPS.\\n\\nPuedes usar “Tomar / seleccionar fotografía” para cargar una imagen mientras tanto.');}
+}
+function takePhoto(){
+  const video=document.getElementById('cameraVideo'),canvas=document.getElementById('cameraCanvas'); if(!video.videoWidth)return alert('Espera un momento a que la cámara esté lista.');
+  canvas.width=video.videoWidth;canvas.height=video.videoHeight;canvas.getContext('2d').drawImage(video,0,0,canvas.width,canvas.height);capturedPhoto=canvas.toDataURL('image/jpeg',0.9);video.style.display='none';canvas.style.display='block';
+  document.getElementById('takePhotoBtn').style.display='none';document.getElementById('retakePhotoBtn').style.display='inline-block';document.getElementById('usePhotoBtn').style.display='inline-block';document.getElementById('cameraStatus').textContent='Fotografía capturada. Puedes volver a tomarla o usarla.';
+}
+function retakePhoto(){capturedPhoto='';document.getElementById('cameraCanvas').style.display='none';document.getElementById('cameraVideo').style.display='block';document.getElementById('takePhotoBtn').style.display='inline-block';document.getElementById('retakePhotoBtn').style.display='none';document.getElementById('usePhotoBtn').style.display='none';document.getElementById('cameraStatus').textContent='Cámara activa. Toma una nueva fotografía.';}
+function useCapturedPhoto(){if(!capturedPhoto)return;window.pendingStudentPhoto=capturedPhoto;document.getElementById('cameraStatus').textContent='Fotografía seleccionada para este alumno.';closeCamera();renderPhotoFieldPreview?.();}
+function closeCamera(){if(cameraStream){cameraStream.getTracks().forEach(t=>t.stop());cameraStream=null;}const v=document.getElementById('cameraVideo'),c=document.getElementById('cameraCanvas');if(v){v.pause?.();v.srcObject=null;v.style.display='none';}if(c)c.style.display='none';['takePhotoBtn','retakePhotoBtn','usePhotoBtn','closeCameraBtn'].forEach(id=>{const el=document.getElementById(id);if(el)el.style.display='none';});const st=document.getElementById('cameraStatus');if(st)st.textContent=capturedPhoto?'Fotografía capturada. Pulsa “Usar fotografía” para aplicarla.':'Cámara cerrada.';}
+function renderPhotoFieldPreview(){const el=document.getElementById('stPhotoPreview');if(!el)return;const old=el.querySelector('img');if(old)old.remove();const src=window.pendingStudentPhoto;if(src){const im=document.createElement('img');im.src=src;im.style.cssText='width:90px;height:110px;object-fit:cover;border-radius:8px;margin-top:8px';el.appendChild(im);}}
+function renderTutorPhotoFieldPreview(){const el=document.getElementById('stTutorPhotoPreview');if(!el)return;const src=window.pendingTutorPhoto||'';el.innerHTML=src?`<img src="${src}" alt="Fotografía del tutor" style="width:90px;height:90px;object-fit:cover;border-radius:50%;margin-top:8px;border:2px solid #ccc"><div>Fotografía del tutor lista</div>`:'Sin fotografía del tutor.';}
+async function openTutorCamera(){
+  const panel=document.getElementById('tutorCameraPanel'),video=document.getElementById('tutorCameraVideo'),canvas=document.getElementById('tutorCameraCanvas'),status=document.getElementById('tutorCameraStatus');
+  if(!navigator.mediaDevices?.getUserMedia){alert('Este navegador no permite acceder a la cámara. Puedes usar “Tomar / seleccionar fotografía”.');return;}
+  try{
+    if(tutorCameraStream)tutorCameraStream.getTracks().forEach(t=>t.stop());
+    tutorCameraStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:'user'},width:{ideal:1280},height:{ideal:960}},audio:false});
+    panel.style.display='block';video.srcObject=tutorCameraStream;video.style.display='block';canvas.style.display='none';
+    document.getElementById('tutorTakePhotoBtn').style.display='inline-block';document.getElementById('tutorRetakePhotoBtn').style.display='none';document.getElementById('tutorUsePhotoBtn').style.display='none';document.getElementById('tutorCloseCameraBtn').style.display='inline-block';
+    status.textContent='Cámara del tutor activa. Coloca al padre, madre o tutor y toma la fotografía.';
+  }catch(e){tutorCameraStream=null;status.textContent='No se pudo abrir la cámara.';alert('No fue posible abrir la cámara del tutor.\n\nPermite el acceso a la cámara del navegador. En computadora normalmente funciona mediante localhost o HTTPS. También puedes usar “Tomar / seleccionar fotografía”.');}
+}
+function takeTutorPhoto(){const video=document.getElementById('tutorCameraVideo'),canvas=document.getElementById('tutorCameraCanvas');if(!video.videoWidth)return alert('Espera un momento a que la cámara esté lista.');canvas.width=video.videoWidth;canvas.height=video.videoHeight;canvas.getContext('2d').drawImage(video,0,0,canvas.width,canvas.height);tutorCapturedPhoto=canvas.toDataURL('image/jpeg',0.9);video.style.display='none';canvas.style.display='block';document.getElementById('tutorTakePhotoBtn').style.display='none';document.getElementById('tutorRetakePhotoBtn').style.display='inline-block';document.getElementById('tutorUsePhotoBtn').style.display='inline-block';document.getElementById('tutorCameraStatus').textContent='Fotografía del tutor capturada. Puedes volver a tomarla o usarla.';}
+function retakeTutorPhoto(){tutorCapturedPhoto='';document.getElementById('tutorCameraCanvas').style.display='none';document.getElementById('tutorCameraVideo').style.display='block';document.getElementById('tutorTakePhotoBtn').style.display='inline-block';document.getElementById('tutorRetakePhotoBtn').style.display='none';document.getElementById('tutorUsePhotoBtn').style.display='none';document.getElementById('tutorCameraStatus').textContent='Cámara activa. Toma una nueva fotografía.';}
+function useTutorCapturedPhoto(){if(!tutorCapturedPhoto)return;window.pendingTutorPhoto=tutorCapturedPhoto;renderTutorPhotoFieldPreview();closeTutorCamera();}
+function closeTutorCamera(){if(tutorCameraStream){tutorCameraStream.getTracks().forEach(t=>t.stop());tutorCameraStream=null;}const v=document.getElementById('tutorCameraVideo'),c=document.getElementById('tutorCameraCanvas'),panel=document.getElementById('tutorCameraPanel');if(v){v.pause?.();v.srcObject=null;v.style.display='none';}if(c)c.style.display='none';if(panel)panel.style.display='none';['tutorTakePhotoBtn','tutorRetakePhotoBtn','tutorUsePhotoBtn','tutorCloseCameraBtn'].forEach(id=>{const el=document.getElementById(id);if(el)el.style.display='none';});}
+
+window.addEventListener('beforeunload',()=>{closeCamera();closeTutorCamera();});
+
+document.getElementById('stPhoto')?.addEventListener('change',function(){
+  const f=this.files?.[0];
+  if(!f)return;
+  const r=new FileReader();
+  r.onload=()=>{window.pendingStudentPhoto=r.result;capturedPhoto='';renderPhotoFieldPreview();};
+  r.readAsDataURL(f);
+});
+
+document.getElementById('stTutorPhoto')?.addEventListener('change',function(){const f=this.files?.[0];if(!f)return;const r=new FileReader();r.onload=()=>{window.pendingTutorPhoto=r.result;tutorCapturedPhoto='';renderTutorPhotoFieldPreview();};r.readAsDataURL(f);});
+
+function newStudent(){window.pendingStudentPhoto='';window.pendingTutorPhoto='';capturedPhoto='';tutorCapturedPhoto='';closeCamera();closeTutorCamera();renderPhotoFieldPreview();renderTutorPhotoFieldPreview();['stId','stName','stGrade','stGroup','stMat','stBirth','stTutor','stTutorPhone','stBackup','stBackupPhone','stNotes'].forEach(id=>document.getElementById(id).value='');stPhoto.value='';const tp=document.getElementById('stTutorPhoto');if(tp)tp.value='';studentTitle.textContent='Nuevo alumno'}
+function saveStudent(){
+ let id=stId.value||crypto.randomUUID(), old=db.students.find(s=>s.id===id);
+ let base={id,name:stName.value.trim(),grade:stGrade.value.trim(),group:stGroup.value.trim(),matricula:stMat.value.trim(),birth:stBirth.value,tutor:stTutor.value.trim(),tutorPhone:stTutorPhone.value.trim(),tutorPhoto:window.pendingTutorPhoto||old?.tutorPhoto||'',backup:stBackup.value.trim(),backupPhone:stBackupPhone.value.trim(),notes:stNotes.value.trim(),photo:window.pendingStudentPhoto||old?.photo||''};
+ if(!base.name)return alert('Escribe el nombre del alumno.');
+ let f=stPhoto.files[0], tf=document.getElementById('stTutorPhoto')?.files?.[0]; Promise.all([f?fileData(f):Promise.resolve(base.photo),tf?fileData(tf):Promise.resolve(base.tutorPhoto)]).then(([photo,tutorPhoto])=>{base.photo=photo;base.tutorPhoto=tutorPhoto;if(old)Object.assign(old,base);else db.students.push(base);window.pendingStudentPhoto='';capturedPhoto='';persist();renderAll();newStudent();alert('Alumno guardado.')})
+}
+function editStudent(id){let s=db.students.find(x=>x.id===id);if(!s)return;window.pendingStudentPhoto=s.photo||'';window.pendingTutorPhoto=s.tutorPhoto||'';capturedPhoto='';tutorCapturedPhoto='';closeCamera();closeTutorCamera();renderPhotoFieldPreview();renderTutorPhotoFieldPreview();Object.entries({stId:s.id,stName:s.name,stGrade:s.grade,stGroup:s.group,stMat:s.matricula,stBirth:s.birth,stTutor:s.tutor,stTutorPhone:s.tutorPhone,stBackup:s.backup,stBackupPhone:s.backupPhone,stNotes:s.notes}).forEach(([k,v])=>document.getElementById(k).value=v||'');studentTitle.textContent='Editar alumno';go('alumnos')}
+function deleteStudent(id){confirmAction('Eliminar alumno','Esta acción eliminará al alumno seleccionado.',()=>{db.students=db.students.filter(s=>s.id!==id);persist();renderAll()})}
+function deleteAllStudents(){confirmAction('Eliminar todos los alumnos','Se eliminarán todos los registros de alumnos. Esta acción no se puede deshacer.',()=>{db.students=[];persist();renderAll()})}
+function renderStudents(){let q=(search.value||'').toLowerCase();let arr=db.students.filter(s=>(s.name+' '+s.matricula).toLowerCase().includes(q));studentTable.innerHTML=arr.map(s=>`<tr><td>${esc(s.name)}</td><td>${esc(s.grade)}</td><td>${esc(s.group)}</td><td>${esc(s.matricula)}</td><td>${s.photo?'Sí':'No'}</td><td><button class="btn2" onclick="editStudent('${s.id}')">Editar</button> <button class="danger" onclick="deleteStudent('${s.id}')">Eliminar</button></td></tr>`).join('')||'<tr><td colspan="6" class="muted">No hay alumnos.</td></tr>'}
+function esc(x){return String(x||'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
+function renderAll(){renderStudents();renderPrintSelect();renderDesignStudentSelect();kStudents.textContent=db.students.length;kPhotos.textContent=db.students.filter(x=>x.photo).length;kTutors.textContent=db.students.filter(x=>x.tutor).length;kTemplate.textContent=db.design.template}
+function renderPrintSelect(){printStudent.innerHTML='<option value="">Seleccionar alumno</option>'+db.students.map(s=>`<option value="${s.id}">${esc(s.name)} — ${esc(s.matricula)}</option>`).join('')}
+function renderDesignStudentSelect(){const el=document.getElementById('designStudent');if(!el)return;const exists=db.students.some(s=>s.id===selectedDesignStudentId);if(!exists)selectedDesignStudentId=db.students[0]?.id||'';el.innerHTML='<option value="">Vista de muestra</option>'+db.students.map(s=>`<option value="${s.id}">${esc(s.name)} — ${esc(s.matricula)}</option>`).join('');el.value=selectedDesignStudentId;updateDesignStudentInfo()}
+function selectDesignStudent(id){selectedDesignStudentId=id||'';updateDesignStudentInfo();renderPreview()}
+function updateDesignStudentInfo(){const el=document.getElementById('designStudentInfo');if(!el)return;const s=db.students.find(x=>x.id===selectedDesignStudentId);el.textContent=s?`Previsualizando: ${s.name} · ${s.grade||'—'} ${s.group||''} · Matrícula ${s.matricula||'—'} · ${s.photo?'Fotografía cargada':'Sin fotografía'}`:'Vista de muestra: se mostrarán datos de ejemplo.'}
+function applyDesignToAll(){persist();alert('Diseño guardado y aplicado a todos los alumnos. Los cambios de posición, tamaño, colores, plantilla y orientación son globales.')}
+function setTemplate(t){db.design.template=t;const map={
+Clasico:['#123c7a','#f0a500'],
+Verde:['#0f766e','#f59e0b'],
+Morado:['#5b21b6','#f0abfc'],
+Oscuro:['#111827','#9ca3af'],
+Rojo:['#b91c1c','#fca5a5'],
+Dorado:['#92400e','#f59e0b'],
+Cielo:['#0369a1','#67e8f9'],
+Naturaleza:['#166534','#86efac'],
+Rosa:['#be185d','#f9a8d4'],
+AzulReal:['#4338ca','#818cf8'],
+Plata:['#374151','#d1d5db'],
+Granate:['#7f1d1d','#f87171'],
+Tecnologico:['#0f172a','#38bdf8'],
+Deportivo:['#14532d','#facc15'],
+Elegante:['#334155','#e2e8f0'],
+Infantil:['#2563eb','#f472b6'],
+Creativo:['#581c87','#ec4899'],
+Institucional:['#134e4a','#5eead4'],
+NegroDorado:['#111827','#d4af37'],
+MarfilOro:['#8a6d1d','#c9a227'],
+AzulEjecutivo:['#172554','#bfdbfe'],
+Grafito:['#3f3f46','#e4e4e7'],
+CafeOro:['#7c2d12','#fbbf24'],
+AzulAcero:['#164e63','#67e8f9'],
+Moderno:['#0f172a','#38bdf8'],
+Escolar:['#1d4ed8','#fbbf24'],
+Academico:['#334155','#e2e8f0'],
+Universitario:['#312e81','#93c5fd'],
+Corporativo:['#0f172a','#64748b'],
+Minimalista:['#475569','#cbd5e1'],
+Marino:['#172554','#60a5fa'],
+Esmeralda:['#064e3b','#34d399'],
+Vino:['#450a0a','#fb7185'],
+Holografico:['#1e293b','#c4b5fd'],
+Tecnologia:['#020617','#22d3ee'],
+InfantilPlus:['#2563eb','#f472b6'],
+Seguridad:['#1e3a8a','#f59e0b'],
+Oficial:['#374151','#9ca3af'],
+Personalizado:['#123c7a','#f0a500']
+};db.design.primary=map[t][0];db.design.accent=map[t][1];applyDesign();persist();renderPreview();renderAll()}
+function applyDesign(){
+  const get=id=>document.getElementById(id);
+  const o=get('dOrient'), sz=get('dSize'), p=get('dPrimary'), a=get('dAccent');
+  const ps=get('dPhotoShape'), ls=get('dLogoSize'), ls2=get('dLogo2Size'), lsh=get('dLogoShape');
+  const bt=get('dBgType'), bc=get('dBgColor'), bc2=get('dBgColor2'), fr=get('dFrame');
+  if(o) db.design.orientation=o.value;
+  if(sz) db.design.size=sz.value;
+  if(p) db.design.primary=p.value;
+  if(a) db.design.accent=a.value;
+  if(ps) db.design.photoShape=ps.value;
+  if(ls) db.design.logoSize=Number(ls.value||58);
+  if(ls2) db.design.logo2Size=Number(ls2.value||48);
+  if(lsh) db.design.logoShape=lsh.value;
+  if(bt) db.design.bgType=bt.value;
+  if(bc) db.design.bgColor=bc.value;
+  if(bc2) db.design.bgColor2=bc2.value;
+  if(fr) db.design.frame=fr.value;
+  document.documentElement.style.setProperty('--p',db.design.primary);
+  document.documentElement.style.setProperty('--a',db.design.accent);
+  persist();
+  renderPreview();
+}
+function saveDesign(){persist();alert('Diseño guardado.')}
+function rotatePreview(){db.design.orientation=db.design.orientation==='land'?'port':'land';dOrient.value=db.design.orientation;renderPreview()}
+function centerSelected(){if(selectedEl){selectedEl.style.left='50%';selectedEl.style.top='50%';selectedEl.style.transform='translate(-50%,-50%)';saveElementState(frontBack,selectedEl.dataset.k,selectedEl);persist();}}
+function qrPayload(s){
+  // El contenido del QR es TEXTO legible al escanearlo, no una URL ni un
+  // JSON codificado. Así cualquier lector QR muestra directamente los datos
+  // del alumno.
+  return [
+    'CREDENSCHOOL',
+    'ESCUELA: '+(db.school?.name||''),
+    'CCT: '+(db.school?.cct||''),
+    'ALUMNO: '+(s?.name||'MUESTRA'),
+    'MATRICULA: '+(s?.matricula||''),
+    'GRADO: '+(s?.grade||''),
+    'GRUPO: '+(s?.group||''),
+    'CICLO ESCOLAR: '+(db.school?.cycle||'')
+  ].join('\\n');
+}
+function qrData(s){
+  const payload=encodeURIComponent(qrPayload(s));
+  return 'https://api.qrserver.com/v1/create-qr-code/?size=400x400&margin=8&data='+payload;
+}
+function renderPreview(){
+  const get=id=>document.getElementById(id);
+  const set=(id,v)=>{const e=get(id);if(e)e.value=v;};
+  set('dOrient',db.design.orientation||'land');
+  set('dSize',db.design.size||'standard');
+  set('dPrimary',db.design.primary||'#123c7a');
+  set('dAccent',db.design.accent||'#f0a500');
+  set('dPhotoShape',db.design.photoShape||'square');
+  set('dLogoSize',db.design.logoSize||58);
+  set('dLogo2Size',db.design.logo2Size||48);
+  set('dLogoShape',db.design.logoShape||'square');
+  set('dBgType',db.design.bgType||'solid');
+  set('dBgColor',db.design.bgColor||'#ffffff');
+  set('dBgColor2',db.design.bgColor2||'#eaf0ff');
+  set('dFrame',db.design.frame||'classic');
+
+  let s=db.students.find(x=>x.id===selectedDesignStudentId)||{
+    name:'NOMBRE DEL ALUMNO',grade:'6°',group:'A',matricula:'000000',
+    tutor:'PADRE / TUTOR',tutorPhone:'0000000000',backup:'SUPLENTE',
+    backupPhone:'0000000000',photo:'',tutorPhoto:''
+  };
+  updateDesignStudentInfo();
+  updatePhotoControls(s);
+
+  const preview=get('credPreview');
+  if(!preview)return;
+  preview.innerHTML=credHTML(s,frontBack,true);
+  preview.className='cred '+(db.design.orientation||'land')+
+    ' t-'+String(db.design.template||'Clasico').toLowerCase()+
+    ' frame-'+String(db.design.frame||'classic').toLowerCase();
+
+  // Apply the selected background directly to the credential with !important.
+  const bg=getBackgroundValue();
+  preview.style.setProperty('background',bg,'important');
+  preview.style.setProperty('background-size',db.design.bgType==='image'?'cover':'auto','important');
+  preview.style.setProperty('background-color',db.design.bgColor||'#ffffff','important');
+
+  enableDrag();
+}
+function loadBackgroundImage(input){
+  const f=input?.files?.[0];
+  if(!f)return;
+  const reader=new FileReader();
+  reader.onload=()=>{
+    db.design.bgImage=reader.result;
+    db.design.bgType='image';
+    const bt=document.getElementById('dBgType'); if(bt)bt.value='image';
+    persist(); renderPreview();
+    const st=document.getElementById('bgStatus'); if(st)st.textContent='✅ Imagen de fondo cargada y aplicada.';
+  };
+  reader.readAsDataURL(f);
+}
+function removeBackgroundImage(){
+  db.design.bgImage='';
+  if(db.design.bgType==='image')db.design.bgType='solid';
+  persist(); renderPreview();
+  const st=document.getElementById('bgStatus'); if(st)st.textContent='Imagen de fondo eliminada.';
+}
+function getBackgroundValue(){
+  const t=db.design.bgType||'solid';
+  const c1=db.design.bgColor||'#ffffff';
+  const c2=db.design.bgColor2||'#eaf0ff';
+  if(t==='image' && db.design.bgImage) return `url("${db.design.bgImage}") center/cover no-repeat`;
+  if(t==='gradient') return `linear-gradient(135deg, ${c1} 0%, ${c2} 100%)`;
+  if(t==='pattern') return `radial-gradient(${c2} 1.2px, transparent 1.2px), ${c1}`;
+  if(t==='waves') return `radial-gradient(ellipse at 20% 0%, transparent 0 45%, ${c2} 46% 50%, transparent 51%), ${c1}`;
+  if(t==='diagonal') return `repeating-linear-gradient(135deg, transparent 0 14px, ${c2} 15px 17px), ${c1}`;
+  return c1;
+}
+function credentialBackground(){
+  const t=db.design.bgType||'solid', c1=db.design.bgColor||'#ffffff', c2=db.design.bgColor2||'#eaf0ff';
+  if(t==='gradient') return `background:linear-gradient(135deg,${c1},${c2});`;
+  if(t==='pattern') return `background-color:${c1};background-image:radial-gradient(${c2} 1px,transparent 1px);background-size:12px 12px;`;
+  if(t==='waves') return `background-color:${c1};background-image:radial-gradient(ellipse at 20% 0%,transparent 0 45%,${c2} 46% 50%,transparent 51%);`;
+  if(t==='diagonal') return `background:${c1};background-image:repeating-linear-gradient(135deg,transparent 0 14px,${c2} 15px 17px);`;
+  return `background:${c1};`;
+}
+function photoImageStyle(s){
+  const a=s?.photoAdjust||{};
+  const zoom=Math.max(80,Math.min(220,Number(a.zoom||100)));
+  const x=Math.max(-100,Math.min(100,Number(a.x||0)));
+  const y=Math.max(-100,Math.min(100,Number(a.y||0)));
+  return `width:100%;height:100%;object-fit:cover;display:block;transform:translate(${x}%,${y}%) scale(${zoom/100});transform-origin:center center;`;
+}
+function getDesignStudent(){
+  return db.students.find(x=>x.id===selectedDesignStudentId)||db.students[0]||null;
+}
+function updatePhotoControls(s){
+  const a=s?.photoAdjust||{zoom:100,x:0,y:0};
+  const set=(id,v)=>{const e=document.getElementById(id);if(e)e.value=v;};
+  const txt=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=v;};
+  set('photoZoom',a.zoom||100); set('photoX',a.x||0); set('photoY',a.y||0);
+  txt('photoZoomValue',(a.zoom||100)+'%'); txt('photoXValue',(a.x||0)+'%'); txt('photoYValue',(a.y||0)+'%');
+}
+function applyPhotoStyleLive(){
+  const s=getDesignStudent(); if(!s)return;
+  const box=document.querySelector('#credPreview .ce[data-k="photo"]');
+  const img=box?.querySelector('img');
+  if(img) img.style.cssText=photoImageStyle(s);
+}
+function adjustPhoto(axis,value){
+  const s=getDesignStudent(); if(!s)return;
+  s.photoAdjust=s.photoAdjust||{zoom:100,x:0,y:0};
+  const v=Number(value);
+  s.photoAdjust[axis]=axis==='zoom'?Math.max(80,Math.min(220,v)):Math.max(-100,Math.min(100,v));
+  const label=axis==='zoom'?'photoZoomValue':axis==='x'?'photoXValue':'photoYValue';
+  const e=document.getElementById(label); if(e)e.textContent=s.photoAdjust[axis]+'%';
+  applyPhotoStyleLive(); persist();
+}
+function nudgePhoto(dx,dy){
+  const s=getDesignStudent(); if(!s)return;
+  s.photoAdjust=s.photoAdjust||{zoom:100,x:0,y:0};
+  s.photoAdjust.x=Math.max(-100,Math.min(100,Number(s.photoAdjust.x||0)+dx));
+  s.photoAdjust.y=Math.max(-100,Math.min(100,Number(s.photoAdjust.y||0)+dy));
+  updatePhotoControls(s); applyPhotoStyleLive(); persist();
+}
+function resetPhotoAdjust(){
+  const s=getDesignStudent(); if(!s)return;
+  s.photoAdjust={zoom:100,x:0,y:0};
+  updatePhotoControls(s); applyPhotoStyleLive(); persist();
+}
+function credHTML(s,side,editable=false,printMode=false){
+  const p=db.design.primary||'#123c7a', a=db.design.accent||'#f0a500', sch=db.school||{};
+  const es=(k,b)=>elementStyle(side,k,b);
+  const photoShape=db.design.photoShape||'square';
+  const logoSize=Number(db.design.logoSize||58);
+  const logo2Size=Number(db.design.logo2Size||48);
+  const logoShape=db.design.logoShape||'square';
+  const logoRadius=logoShape==='round'?'50%':logoShape==='rounded'?'12px':'0';
+  const logoBackSize=Math.max(32,Math.round(logoSize*.82));
+
+  if(side==='front'){
+    return `
+      ${sch.logo?`<div class="ce" data-k="logo" style="left:10px!important;top:10px!important;width:${Math.min(logoSize,58)}px!important;height:${Math.min(logoSize,58)}px!important;display:flex!important;align-items:center!important;justify-content:center!important;border-radius:${logoRadius};overflow:hidden!important;z-index:30!important;background:#fff!important;padding:0!important;"><img src="${sch.logo}" alt="Logotipo 1" style="width:100%;height:100%;object-fit:contain;"></div>`:''}
+      ${sch.logo2?`<div class="ce" data-k="logo2" style="right:86px!important;top:10px!important;width:${Math.min(logo2Size,52)}px!important;height:${Math.min(logo2Size,52)}px!important;display:flex!important;align-items:center!important;justify-content:center!important;border-radius:${logoRadius};overflow:hidden!important;z-index:30!important;background:#fff!important;padding:0!important;"><img src="${sch.logo2}" alt="Logotipo 2" style="width:100%;height:100%;object-fit:contain;"></div>`:''}
+      <div class="ce" data-k="head" style="left:${sch.logo?'76':'12'}px!important;right:${sch.logo2?'142px':(sch.logo?'92':'12')}px!important;top:9px!important;color:${p}!important;font-weight:900!important;font-size:12px!important;width:auto!important;text-align:center!important;z-index:31!important;background:rgba(255,255,255,.96)!important;padding:2px 4px!important;line-height:1.15!important;">${esc(sch.name||'ESCUELA')}</div>
+      <div class="ce" data-k="cct" style="left:${sch.logo?'76':'14'}px!important;top:32px!important;font-size:8px!important;color:#555!important;width:${sch.logo2?'calc(100% - 218px)':(sch.logo?'calc(100% - 150px)':'calc(100% - 28px)')}!important;text-align:center!important;z-index:31!important;background:rgba(255,255,255,.9)!important;padding:1px 4px!important;">CCT ${esc(sch.cct||'')}</div>
+      <div class="ce photoBox photoShape-${photoShape}" data-k="photo" style="${es('photo',`left:14px;top:${sch.logo?'70':'55'}px;width:${db.design.orientation==='land'?'105px':'125px'};height:${db.design.orientation==='land'?'135px':'155px'};z-index:2;`)}">${s.photo?`<img src="${s.photo}" alt="Fotografía" style="${photoImageStyle(s)}">`:'📷'}</div>
+      <div class="ce" data-k="name" style="${es('name',`left:${db.design.orientation==='land'?'128':'24'}px;top:${db.design.orientation==='land'?'82':'210'}px;width:${db.design.orientation==='land'?'285':'280'}px;font-weight:900;color:${p};font-size:15px;line-height:1.2;z-index:10;background:rgba(255,255,255,.97);padding:3px 6px;border-radius:3px;`)}"><div style="font-size:9px;font-weight:900;color:#555;letter-spacing:.3px;margin-bottom:2px;">NOMBRE DEL ALUMNO</div>${esc(s.name||'NOMBRE DEL ALUMNO')}</div>
+      <div class="ce" data-k="grade" style="${es('grade',`left:${db.design.orientation==='land'?'128':'24'}px;top:${db.design.orientation==='land'?'138':'250'}px;width:${db.design.orientation==='land'?'205':'280'}px;font-size:12px;font-weight:800;line-height:1.4;z-index:10;background:rgba(255,255,255,.98);padding:4px 6px;border-radius:3px;`)}">GRADO: ${esc(s.grade||'—')} &nbsp;&nbsp; GRUPO: ${esc(s.group||'—')}</div>
+      <div class="ce" data-k="mat" style="${es('mat',`left:${db.design.orientation==='land'?'128':'24'}px;top:${db.design.orientation==='land'?'177':'282'}px;width:${db.design.orientation==='land'?'205':'280'}px;font-size:12px;font-weight:800;line-height:1.4;z-index:10;background:rgba(255,255,255,.98);padding:4px 6px;border-radius:3px;`)}">MATRÍCULA: <b>${esc(s.matricula||'—')}</b></div>
+      <div class="ce" data-k="cycle" style="${es('cycle','left:14px;bottom:10px;font-size:9px;color:#555;z-index:2;')}">Ciclo ${esc(sch.cycle||'')} · ${esc(sch.shift||'')}</div>
+      <div class="ce" data-k="qr" style="${es('qr','right:8px;top:42px;z-index:60;')}"><div style="background:#fff;padding:4px;border:1px solid #111;border-radius:3px;width:112px;height:112px;box-sizing:border-box;display:flex;align-items:center;justify-content:center;"><img class="qr" src="${qrData(s)}" alt="QR con datos del alumno" title="QR: datos del alumno" style="width:104px;height:104px;display:block;object-fit:contain;image-rendering:pixelated;" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="qrFallback" style="display:none;width:104px;height:104px;background:repeating-conic-gradient(#111 0 25%,#fff 0 50%) 50%/9px 9px;border:2px solid #fff;align-items:center;justify-content:center;font-weight:900;font-size:9px;color:#111;">QR</div></div><div style="font-size:7px;font-weight:900;text-align:center;margin-top:1px;color:#111;">QR</div></div>
+      <div style="position:absolute;left:0;right:0;top:0;height:6px;background:${p};z-index:4"></div>
+      <div style="position:absolute;left:0;right:0;bottom:0;height:3px;background:${a};z-index:4"></div>`;
+  }
+
+  if(side==='back'){
+    return `
+      ${sch.logo?`<div class="ce" data-k="backlogo" style="${es('backlogo',`right:12px;top:10px;width:${logoBackSize}px;height:${logoBackSize}px;display:flex;align-items:center;justify-content:center;border-radius:${logoRadius};overflow:hidden;z-index:3;`)}"><img src="${sch.logo}" alt="Logotipo" style="width:100%;height:100%;object-fit:contain;"></div>`:''}
+      <div class="ce" data-k="backhead" style="${es('backhead',`left:15px;top:14px;color:${p};font-weight:900;font-size:14px;width:calc(100% - 75px);z-index:2;`)}">DATOS DE CONTACTO</div>
+      <div class="ce" data-k="tutor" style="${es('tutor','left:18px;top:70px;width:calc(100% - 36px);font-size:11px;z-index:2;')}"><b>Padre / madre / tutor:</b><br>${esc(s.tutor||'—')}<br>Tel: ${esc(s.tutorPhone||'—')}</div>
+      ${s.tutorPhoto?`<div class="ce photoBox photoShape-round" data-k="tutorPhoto" style="${es('tutorPhoto','right:18px;top:62px;width:58px;height:58px;z-index:5;border:2px solid #fff;box-shadow:0 1px 5px #0003;')}"><img src="${s.tutorPhoto}" alt="Fotografía del tutor" style="width:100%;height:100%;object-fit:cover;"></div>`:''}
+      <div class="ce" data-k="backup" style="${es('backup','left:18px;top:140px;width:calc(100% - 36px);font-size:11px;z-index:2;')}"><b>Contacto suplente:</b><br>${esc(s.backup||'—')}<br>Tel: ${esc(s.backupPhone||'—')}</div>
+      <div class="ce" data-k="notes" style="${es('notes','left:18px;top:210px;width:calc(100% - 36px);font-size:10px;z-index:2;')}"><b>Emergencia / notas:</b> ${esc(s.notes||'—')}</div>
+      <div class="ce directorSign" data-k="directorSign" style="right:8px!important;bottom:7px!important;width:175px!important;height:58px!important;min-width:0!important;min-height:0!important;text-align:center!important;font-size:9px!important;line-height:1.1!important;z-index:100!important;background:rgba(255,255,255,.98)!important;padding:2px 4px!important;border-radius:3px!important;color:#111!important;display:block!important;visibility:visible!important;opacity:1!important;overflow:visible!important;">${sch.signature?`<img class="signature" src="${sch.signature}" style="display:block!important;visibility:visible!important;width:90px!important;height:25px!important;object-fit:contain!important;margin:0 auto!important;">`:'<div style="height:25px;line-height:25px;">____________________</div>'}<div style="font-size:8px!important;">DIRECTOR</div><div style="font-size:10px!important;font-weight:900!important;white-space:nowrap!important;">${esc(sch.director||'JULIO CESAR COB DZUL')}</div></div>
+      <div style="position:absolute;left:0;right:0;top:0;height:6px;background:${p};z-index:4"></div>
+      <div style="position:absolute;left:0;right:0;bottom:0;height:3px;background:${a};z-index:4"></div>`;
+  }
+  return '';
+}
+function enableDrag(){
+ document.querySelectorAll('#credPreview .ce').forEach(el=>{
+  const side=frontBack,k=el.dataset.k;
+  el.onclick=e=>{e.stopPropagation();selectedEl=el;document.querySelectorAll('#credPreview .ce').forEach(x=>x.classList.remove('selected'));el.classList.add('selected')};
+  el.onpointerdown=e=>{if(e.target.classList.contains('handle'))return;selectedEl=el;el.classList.add('selected');drag={el,side,k,startX:e.clientX,startY:e.clientY,left:el.offsetLeft,top:el.offsetTop};el.setPointerCapture(e.pointerId)};
+  el.onpointermove=e=>{if(!drag||drag.el!==el)return;el.style.left=(drag.left+e.clientX-drag.startX)+'px';el.style.top=(drag.top+e.clientY-drag.startY)+'px'};
+  el.onpointerup=()=>{if(drag&&drag.el===el){saveElementState(side,k,el);persist();drag=null}};
+  let h=document.createElement('i');h.className='handle';el.appendChild(h);
+  h.onpointerdown=e=>{e.stopPropagation();selectedEl=el;resize={el,side,k,startX:e.clientX,startY:e.clientY,w:el.offsetWidth,h:el.offsetHeight};h.setPointerCapture(e.pointerId)};
+  h.onpointermove=e=>{if(!resize||resize.el!==el)return;el.style.width=Math.max(30,resize.w+e.clientX-resize.startX)+'px';el.style.height=Math.max(18,resize.h+e.clientY-resize.startY)+'px'};
+  h.onpointerup=()=>{if(resize&&resize.el===el){saveElementState(side,k,el);persist();resize=null}};
+ });
+}
+function setGalleryBackground(name){
+  const bt=document.getElementById('dBgType'), bc=document.getElementById('dBgColor'), bc2=document.getElementById('dBgColor2');
+  if(!bt||!bc||!bc2)return;
+  const m={
+    azul:['gradient','#dbeafe','#1d4ed8'],
+    cielo:['gradient','#e0f2fe','#38bdf8'],
+    verde:['gradient','#dcfce7','#15803d'],
+    turquesa:['gradient','#ccfbf1','#0f766e'],
+    rosa:['gradient','#fce7f3','#be185d'],
+    morado:['gradient','#f3e8ff','#7e22ce'],
+    oro:['gradient','#fff7cc','#b7791f'],
+    rojo:['gradient','#fee2e2','#b91c1c'],
+    gris:['gradient','#f3f4f6','#4b5563'],
+    navidad:['gradient','#dcfce7','#fee2e2'],
+    infantil:['gradient','#fef3c7','#fbcfe8'],
+    ondas:['waves','#eff6ff','#93c5fd']
+  };
+  const v=m[name]||m.azul;
+  bt.value=v[0]; bc.value=v[1]; bc2.value=v[2];
+  if(name==='ondas') db.design.bgType='waves'; else db.design.bgType='gradient';
+  db.design.bgColor=v[1]; db.design.bgColor2=v[2]; db.design.bgImage='';
+  persist(); renderPreview();
+}
+
+function setProBackground(name){
+  const bt=document.getElementById('dBgType'),bc=document.getElementById('dBgColor'),bc2=document.getElementById('dBgColor2');
+  if(!bt||!bc||!bc2)return;
+  const m={
+    corporativo:['gradient','#eff6ff','#1e3a8a'],
+    ejecutivo:['gradient','#f8fafc','#0f172a'],
+    azulmarino:['gradient','#dbeafe','#172554'],
+    azulplata:['gradient','#f8fafc','#64748b'],
+    negrooro:['gradient','#09090b','#d4af37'],
+    marfiloro:['gradient','#fffdf5','#c9a227'],
+    verdeinstitucional:['gradient','#ecfdf5','#065f46'],
+    verdeesmeralda:['gradient','#d1fae5','#047857'],
+    vino:['gradient','#fff1f2','#7f1d1d'],
+    antracita:['gradient','#18181b','#71717a'],
+    platino:['gradient','#ffffff','#cbd5e1'],
+    azulgeometrico:['diagonal','#eff6ff','#1d4ed8'],
+    lineasfinas:['pattern','#f8fafc','#e2e8f0'],
+    malla:['pattern','#f8fafc','#64748b'],
+    ondaazul:['waves','#f8fbff','#93c5fd'],
+    universitario:['diagonal','#eef2ff','#3730a3'],
+    minimal:['gradient','#ffffff','#f1f5f9']
+  };
+  const v=m[name]||m.corporativo;
+  bt.value=v[0];bc.value=v[1];bc2.value=v[2];
+  db.design.bgType=v[0];db.design.bgColor=v[1];db.design.bgColor2=v[2];db.design.bgImage='';
+  persist();renderPreview();
+  const st=document.getElementById('bgStatus');
+  if(st)st.textContent='✅ Fondo profesional aplicado: '+name;
+}
+
+
+function setPremiumBackground(name){
+  const bt=document.getElementById('dBgType'),bc=document.getElementById('dBgColor'),bc2=document.getElementById('dBgColor2');
+  if(!bt||!bc||!bc2)return;
+  const m={
+    cristalazul:['gradient','#0f172a','#2563eb'],
+    cristaloro:['gradient','#111827','#b8860b'],
+    carbon:['pattern','#18181b','#3f3f46'],
+    seda:['gradient','#e2e8f0','#64748b'],
+    escudo:['diagonal','#eff6ff','#1e3a8a'],
+    bandasoro:['diagonal','#0f172a','#d4af37'],
+    aurora:['gradient','#0f172a','#312e81'],
+    azulacero:['gradient','#ecfeff','#164e63'],
+    verdeoro:['gradient','#052e16','#d4af37'],
+    vinooro:['gradient','#450a0a','#d4af37'],
+    perla:['gradient','#ffffff','#e5e7eb'],
+    microlineas:['pattern','#f8fafc','#dbe2ea']
+  };
+  const v=m[name]||m.cristalazul;
+  bt.value=v[0];bc.value=v[1];bc2.value=v[2];
+  db.design.bgType=v[0];db.design.bgColor=v[1];db.design.bgColor2=v[2];db.design.bgImage='';
+  persist();renderPreview();
+  const st=document.getElementById('bgStatus');
+  if(st)st.textContent='💎 Fondo PREMIUM aplicado: '+name;
+}
+
+function setBackgroundPreset(type){
+  const bt=document.getElementById('dBgType'), bc=document.getElementById('dBgColor'), bc2=document.getElementById('dBgColor2');
+  if(!bt||!bc||!bc2)return;
+  if(type==='premium'){
+    bt.value='gradient'; bc.value='#f8fafc'; bc2.value=db.design.accent||'#f0a500';
+  }else if(type==='azul'){
+    bt.value='gradient'; bc.value='#dbeafe'; bc2.value='#1d4ed8';
+  }else if(type==='verde'){
+    bt.value='gradient'; bc.value='#dcfce7'; bc2.value='#15803d';
+  }else if(type==='rosa'){
+    bt.value='gradient'; bc.value='#fce7f3'; bc2.value='#be185d';
+  }else{
+    bt.value='solid'; bc.value='#ffffff'; bc2.value='#ffffff';
+  }
+  applyDesign();
+}
+function selectLogoElement(){const el=document.querySelector('#credPreview .ce[data-k="logo"]');if(!el)return alert('Primero carga un logotipo en Escuela.');selectedEl=el;document.querySelectorAll('#credPreview .ce').forEach(x=>x.classList.remove('selected'));el.classList.add('selected');}
+function resetLayout(){db.design.elements={};selectedEl=null;persist();renderPreview();alert('Posiciones y tamaños restablecidos.');}
+
+function printCurrent(){let s=db.students[0]||{name:'NOMBRE DEL ALUMNO'};openPrint([s])}
+function printSelected(){let s=db.students.find(x=>x.id===printStudent.value);if(!s)return alert('Selecciona un alumno.');openPrint(Array(Number(printCopies.value||1)).fill(s))}
+function printAll(){if(!db.students.length)return alert('No hay alumnos.'); const all=db.students.filter(s=>s&&s.id); if(!all.length)return alert('No hay alumnos válidos.'); openPrint(all);}
+function printBlank(){openPrint([{name:'NOMBRE DEL ALUMNO',grade:'6°',group:'A',matricula:'000000',tutor:'PADRE / TUTOR',tutorPhone:'0000000000',backup:'SUPLENTE',backupPhone:'0000000000'}])}
+function printDims(){let o=db.design.orientation||'land', sz=db.design.size||'standard';let map={standard:[86,54],small:[80,50],large:[90,60],custom70x100:[100,70]};let [landW,landH]=map[sz]||map.standard;return o==='land'?[landW,landH]:[landH,landW]}
+function printGrid(n){if(n===1)return [1,1];if(n===2)return [2,1];if(n===4)return [2,2];if(n===6)return [3,2];return [4,2]}
+function openPrint(arr){
+  if(!Array.isArray(arr) || !arr.length){
+    alert('No hay credenciales para imprimir.');
+    return;
+  }
+
+  const requested=Math.max(1,Number(document.getElementById('perSheet')?.value||1));
+  // Frente + reverso van juntos horizontalmente; 2 parejas por hoja caben en A4 sin cortar credenciales.
+  const crop=(document.getElementById('cropMarks')?.value||'yes')==='yes';
+  const [w,h]=printDims();
+  const maxPerSheet=Math.max(1,Math.floor((190+7)/(h+7)));
+  const n=Math.min(requested,maxPerSheet);
+
+  // Frente y reverso conservan EXACTAMENTE la misma escala física.
+  // Cada pareja ocupa una fila en A4 horizontal.
+  let pages='';
+  for(let i=0;i<arr.length;i+=n){
+    const chunk=arr.slice(i,i+n);
+    let cards='';
+    chunk.forEach(s=>{
+      cards += `
+        <div class="pair">
+          <div class="pc">${credHTML(s,'front',false,false)}</div>
+          <div class="pc">${credHTML(s,'back',false,false)}</div>
+        </div>`;
+    });
+    pages += `<section class="sheet pairSheet">${cards}</section>`;
+  }
+
+  const cropCSS=crop?`.pc{outline:0.25mm dashed #999}`:'';
+
+  const printHTML=`<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>CredenSchool - Frente y Reverso</title>
+<style>
+@page{size:A4 landscape;margin:10mm}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;background:#fff}
+body{font-family:Arial,sans-serif;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.sheet{
+  width:277mm;
+  height:190mm;
+  min-height:190mm;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:flex-start;
+  gap:7mm;
+  overflow:hidden;
+  page-break-after:always;
+  break-after:page;
+}
+.pair{
+  width:100%;
+  height:${h}mm;
+  display:flex;
+  flex-direction:row;
+  justify-content:center;
+  align-items:flex-start;
+  gap:6mm;
+  flex:0 0 ${h}mm;
+  page-break-inside:avoid;
+  break-inside:avoid;
+}
+.pc{
+  width:${w}mm;
+  height:${h}mm;
+  flex:0 0 ${w}mm;
+  position:relative;
+  overflow:hidden;
+  margin:0!important;
+  padding:0!important;
+}
+.pc>.cred{
+  width:${db.design.orientation==='land'?430:330}px!important;
+  height:${db.design.orientation==='land'?270:500}px!important;
+  min-width:${db.design.orientation==='land'?430:330}px!important;
+  min-height:${db.design.orientation==='land'?270:500}px!important;
+  max-width:none!important;
+  max-height:none!important;
+  margin:0!important;
+  padding:0!important;
+  position:relative!important;
+  left:0!important;
+  top:0!important;
+  transform:scaleX(${((w*96/25.4)/(db.design.orientation==='land'?430:330)).toFixed(6)}) scaleY(${((h*96/25.4)/(db.design.orientation==='land'?270:500)).toFixed(6)})!important;
+  transform-origin:top left!important;
+  box-shadow:none!important;
+  overflow:hidden!important;
+  background:${getBackgroundValue()}!important;
+  background-size:${db.design.bgType==='image'?'cover':'auto'}!important;
+}
+.pc img{
+  max-width:100%!important;
+  max-height:100%!important;
+  box-sizing:border-box!important;
+}
+.pc .photoBox{
+  overflow:hidden!important;
+  z-index:2!important;
+}
+.pc .directorSign{
+  display:block!important;
+  visibility:visible!important;
+  opacity:1!important;
+  overflow:visible!important;
+  z-index:100!important;
+}
+.pc .directorSign b,.pc .directorSign div{display:block!important;visibility:visible!important;opacity:1!important;}
+.pc .ce[data-k="name"],.pc .ce[data-k="grade"],.pc .ce[data-k="mat"]{
+  display:block!important;
+  visibility:visible!important;
+  opacity:1!important;
+  z-index:20!important;
+  color:#111!important;
+}
+.pc .ce[data-k="grade"],.pc .ce[data-k="mat"]{
+  white-space:normal!important;
+  overflow:visible!important;
+}
+.pc .ce[data-k="qr"]{z-index:40!important;display:block!important;visibility:visible!important;opacity:1!important;}
+
+.pc .ce[data-k="qr"]{display:block!important;visibility:visible!important;opacity:1!important;overflow:visible!important;}
+.pc .ce[data-k="qr"] img.qr{display:block!important;visibility:visible!important;opacity:1!important;object-fit:contain!important;background:#fff!important;}
+.pc .qrFallback{display:none!important;}
+.pc .printFrontData{overflow:visible!important;min-height:0!important;display:block!important;visibility:visible!important;opacity:1!important;}
+.pc .photoBox img{
+  width:100%!important;
+  height:100%!important;
+  object-fit:cover!important;
+  display:block!important;
+}
+${cropCSS}
+@media print{
+  html,body{width:297mm}
+  body{margin:0}
+  .sheet{page-break-after:always;break-after:page}
+}
+</style>
+</head>
+<body>${pages}</body>
+</html>`;
+
+  // Usar un iframe oculto evita que el navegador bloquee ventanas emergentes.
+  // También permite imprimir directamente el contenido ya preparado.
+  const frame=document.createElement('iframe');
+  frame.style.cssText='position:fixed;right:0;bottom:0;width:1px;height:1px;border:0;opacity:0;pointer-events:none;';
+  document.body.appendChild(frame);
+  const wdw=frame.contentWindow;
+  wdw.document.open();
+  wdw.document.write(printHTML);
+  wdw.document.close();
+
+  // Esperar a que carguen logo, fotografías, firma y especialmente el QR antes de imprimir.
+  const printWhenReady=async()=>{
+    const imgs=[...wdw.document.images];
+    await Promise.all(imgs.map(img=>new Promise(resolve=>{
+      if(img.complete && img.naturalWidth>0) return resolve();
+      img.onload=()=>resolve();
+      img.onerror=()=>resolve();
+      setTimeout(resolve,7000);
+    })));
+    await new Promise(r=>setTimeout(r,1800));
+    const qrImgs=[...wdw.document.querySelectorAll('.ce[data-k="qr"] img.qr')];
+    await Promise.all(qrImgs.map(img=>new Promise(resolve=>{if(img.complete&&img.naturalWidth>0)return resolve(); img.onload=()=>resolve(); img.onerror=()=>resolve(); setTimeout(resolve,4000);})));
+    await new Promise(r=>setTimeout(r,500));
+    wdw.focus();
+    wdw.onafterprint=()=>setTimeout(()=>frame.remove(),500);
+    wdw.print();
+  };
+  if(wdw.document.readyState==='complete') printWhenReady(); else wdw.onload=printWhenReady;
+}
+async function loadExternalScript(urls, ready){
+  if(ready()) return true;
+  for(const url of urls){
+    try{
+      await new Promise((resolve,reject)=>{
+        const s=document.createElement('script');
+        s.src=url;
+        s.onload=()=>resolve();
+        s.onerror=()=>reject(new Error('No se pudo cargar '+url));
+        document.head.appendChild(s);
+      });
+      if(ready()) return true;
+    }catch(e){ console.warn('Biblioteca no disponible:',url,e); }
+  }
+  return false;
+}
+async function loadPdfLib(){
+  if(window.jspdf?.jsPDF)return window.jspdf.jsPDF;
+  const ok=await loadExternalScript([
+    'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js',
+    'https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js',
+    'https://unpkg.com/jspdf@2.5.1/dist/jspdf.umd.min.js'
+  ],()=>!!window.jspdf?.jsPDF);
+  if(!ok) throw new Error('No se pudo cargar jsPDF');
+  return window.jspdf.jsPDF;
+}
+function svgDataUrl(svg){
+  return 'data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svg);
+}
+async function cardDataUrl(s,side){
+  const w=860,h=540;
+
+  const iframe=document.createElement('iframe');
+  iframe.style.cssText='position:fixed;left:-30000px;top:0;width:'+w+'px;height:'+h+'px;border:0;visibility:hidden;';
+  document.body.appendChild(iframe);
+
+  const idoc=iframe.contentDocument;
+  const iwin=iframe.contentWindow;
+
+  // Copy every stylesheet/style block so the credential has the same
+  // appearance inside the PDF renderer.
+  const head=idoc.head;
+  document.querySelectorAll('style').forEach(st=>{
+    const ns=idoc.createElement('style');
+    ns.textContent=st.textContent;
+    head.appendChild(ns);
+  });
+
+  const linkPromises=[];
+  document.querySelectorAll('link[rel="stylesheet"]').forEach(link=>{
+    const nl=idoc.createElement('link');
+    nl.rel='stylesheet';
+    nl.href=link.href;
+    head.appendChild(nl);
+    linkPromises.push(new Promise(resolve=>{
+      nl.onload=resolve; nl.onerror=resolve;
+    }));
+  });
+
+  const body=idoc.body;
+  body.style.margin='0';
+  body.style.padding='0';
+  body.style.width=w+'px';
+  body.style.height=h+'px';
+  body.style.overflow='hidden';
+  body.innerHTML=credHTML(s,side,false);
+
+  const card=body.firstElementChild;
+  if(!card){
+    iframe.remove();
+    throw new Error('No se pudo crear la credencial.');
+  }
+
+  card.style.width=w+'px';
+  card.style.height=h+'px';
+  card.style.position='relative';
+  card.style.margin='0';
+  card.style.overflow='hidden';
+  card.style.background=getBackgroundValue();
+
+  await Promise.all(linkPromises);
+  await new Promise(r=>setTimeout(r,500));
+
+  // Wait for logo, photo, signature and QR images.
+  const imgs=[...card.querySelectorAll('img')];
+  await Promise.all(imgs.map(img=>new Promise(resolve=>{
+    if(img.complete && img.naturalWidth>0) return resolve();
+    img.onload=()=>resolve();
+    img.onerror=()=>resolve();
+    setTimeout(resolve,5000);
+  })));
+
+  await new Promise(r=>iwin.requestAnimationFrame(()=>iwin.requestAnimationFrame(r)));
+
+  const canvas=await window.html2canvas(card,{
+    scale:2,
+    useCORS:true,
+    allowTaint:true,
+    backgroundColor:null,
+    logging:false,
+    imageTimeout:15000,
+    width:w,
+    height:h,
+    windowWidth:w,
+    windowHeight:h
+  });
+
+  const data=canvas.toDataURL('image/jpeg',0.96);
+  iframe.remove();
+  return data;
+}
+async function loadQRCodeLib(){
+  if(window.qrcode)return window.qrcode;
+  const ok=await loadExternalScript([
+    'https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js',
+    'https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js',
+    'https://unpkg.com/qrcode-generator@1.4.4/qrcode.js'
+  ],()=>!!window.qrcode);
+  if(!ok) throw new Error('No se pudo cargar qrcode-generator');
+  return window.qrcode;
+}
+async function loadHtml2Canvas(){
+  if(window.html2canvas)return window.html2canvas;
+  const ok=await loadExternalScript([
+    'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js',
+    'https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js',
+    'https://unpkg.com/html2canvas@1.4.1/dist/html2canvas.min.js'
+  ],()=>!!window.html2canvas);
+  if(!ok) throw new Error('No se pudo cargar html2canvas');
+  return window.html2canvas;
+}
+async function makePDF(arr){
+  if(!Array.isArray(arr) || !arr.length){
+    alert('No hay credenciales para exportar.');
+    return;
+  }
+  try{
+    const jsPDF=await loadPdfLib();
+    const html2canvas=await loadHtml2Canvas();
+    let qrLib=null;
+    try{qrLib=await loadQRCodeLib();}catch(e){console.warn('QR local no disponible:',e)}
+    const orientation=db.design.orientation||'land';
+    const isLand=orientation==='land';
+    const baseW=isLand?430:330;
+    const baseH=isLand?270:500;
+    const [cardW,cardH]=printDims();
+    const requested=Math.max(1,Number(document.getElementById('perSheet')?.value||1));
+    const maxRows=Math.max(1,Math.floor((190+7)/(cardH+7)));
+    const perSheet=Math.min(requested,maxRows);
+    const gap=6;
+
+    const pdf=new jsPDF({orientation:'landscape',unit:'mm',format:'a4',compress:true});
+    const stage=document.createElement('div');
+    stage.style.cssText='position:fixed;left:-50000px;top:0;background:#fff;padding:0;margin:0;z-index:999999;visibility:visible;opacity:1;';
+    document.body.appendChild(stage);
+
+    async function renderSide(student,side){
+      const holder=document.createElement('div');
+      holder.style.cssText=`width:${baseW}px;height:${baseH}px;margin:0;padding:0;overflow:hidden;background:#fff;`;
+      // credHTML devuelve los elementos internos de la credencial (no un contenedor).
+      // Antes se tomaba firstElementChild como la tarjeta, por lo que html2canvas
+      // capturaba únicamente el primer elemento (el logotipo). Aquí creamos el
+      // contenedor .cred real y metemos dentro TODO el frente/reverso.
+      const card=document.createElement('div');
+      card.className='cred '+(db.design.orientation||'land')+
+        ' t-'+String(db.design.template||'Clasico').toLowerCase()+
+        ' frame-'+String(db.design.frame||'classic').toLowerCase();
+      card.innerHTML=credHTML(student,side,false,false);
+      holder.appendChild(card);
+
+      // Generar el QR dentro del documento, evitando que html2canvas pierda
+      // la imagen remota por restricciones CORS.
+      if(qrLib){
+        const qrImg=card.querySelector('img.qr');
+        if(qrImg){
+          try{
+            const payload=qrPayload(student);
+            const qr=qrLib(0,'M');
+            qr.addData(payload);
+            qr.make();
+            qrImg.src=qr.createDataURL(4,0);
+            qrImg.removeAttribute('crossorigin');
+          }catch(e){console.warn('No se pudo generar QR local:',e);}
+        }
+      }
+      card.style.width=baseW+'px';
+      card.style.height=baseH+'px';
+      card.style.minWidth=baseW+'px';
+      card.style.minHeight=baseH+'px';
+      card.style.margin='0';
+      card.style.position='relative';
+      card.style.left='0';
+      card.style.top='0';
+      card.style.transform='none';
+      card.style.overflow='hidden';
+      card.style.boxShadow='none';
+      stage.appendChild(holder);
+
+      const imgs=[...card.querySelectorAll('img')];
+      await Promise.all(imgs.map(img=>new Promise(resolve=>{
+        if(img.complete && img.naturalWidth>0){resolve();return;}
+        img.onload=resolve; img.onerror=resolve;
+        setTimeout(resolve,8000);
+      })));
+      await new Promise(r=>setTimeout(r,700));
+
+      const canvas=await html2canvas(card,{
+        scale:2,
+        useCORS:true,
+        allowTaint:false,
+        backgroundColor:'#ffffff',
+        logging:false,
+        imageTimeout:15000,
+        width:baseW,
+        height:baseH,
+        windowWidth:baseW,
+        windowHeight:baseH
+      });
+      holder.remove();
+      return canvas.toDataURL('image/png');
+    }
+
+    for(let i=0;i<arr.length;i+=perSheet){
+      if(i>0)pdf.addPage('a4','landscape');
+      const chunk=arr.slice(i,i+perSheet);
+      const totalPairW=cardW*2+gap;
+      const x=(297-totalPairW)/2;
+      let y=10;
+      for(const student of chunk){
+        const front=await renderSide(student,'front');
+        const back=await renderSide(student,'back');
+        pdf.addImage(front,'PNG',x,y,cardW,cardH,undefined,'FAST');
+        pdf.addImage(back,'PNG',x+cardW+gap,y,cardW,cardH,undefined,'FAST');
+        y+=cardH+7;
+      }
+    }
+    stage.remove();
+    const stamp=new Date().toISOString().slice(0,10).replace(/-/g,'');
+    pdf.save('CredenSchool_'+stamp+'.pdf');
+  }catch(e){
+    console.error('PDF CredenSchool:',e);
+    // Fallback seguro: en archivos HTML locales el navegador puede bloquear
+    // la carga de jsPDF/html2canvas. En ese caso usamos directamente la
+    // impresión nativa del navegador, que permite elegir "Guardar como PDF".
+    try{
+      openPrint(arr);
+    }catch(printErr){
+      console.error('Impresión CredenSchool:',printErr);
+      alert('No se pudo preparar el PDF. Cierra y vuelve a abrir la aplicación e inténtalo nuevamente.');
+    }
+  }
+}
+function pdfBusy(on){
+  const ids=['generarCredencialPrincipal'];
+  document.querySelectorAll('button[onclick*="downloadSelectedPDF"],button[onclick*="downloadAllPDF"],button[onclick*="generarCredencialesExcel"]').forEach(b=>{
+    b.disabled=!!on;
+    if(on){b.dataset.oldText=b.textContent;b.textContent='⏳ Preparando PDF...';}
+    else if(b.dataset.oldText){b.textContent=b.dataset.oldText;}
+  });
+}
+function downloadCurrentPDF(){
+  const s=db.students.find(x=>x.id===selectedDesignStudentId)||db.students[0];
+  if(!s)return alert('Primero registra o selecciona un alumno.');
+  makePDF([s]);
+}
+async function downloadSelectedPDF(){
+  const s=db.students.find(x=>x.id===printStudent.value);
+  if(!s)return alert('Selecciona un alumno.');
+  pdfBusy(true);
+  try{ await makePDF(Array(Number(printCopies.value||1)).fill(s)); }
+  finally{ pdfBusy(false); }
+}
+async function downloadAllPDF(){
+  if(!db.students.length)return alert('No hay alumnos registrados.');
+  pdfBusy(true);
+  try{ await makePDF(db.students.filter(s=>s&&s.id)); }
+  finally{ pdfBusy(false); }
+}
+
+
+function normalizarEncabezadoExcel(v){
+  return String(v??'')
+    .normalize('NFD').replace(/[\u0300-\u036f]/g,'')
+    .toLowerCase().replace(/[^a-z0-9]+/g,'').trim();
+}
+function buscarColumnaExcel(obj, aliases){
+  const keys=Object.keys(obj||{});
+  const norm={};
+  keys.forEach(k=>norm[normalizarEncabezadoExcel(k)]=k);
+  for(const a of aliases){
+    const k=norm[normalizarEncabezadoExcel(a)];
+    if(k!=null)return k;
+  }
+  return null;
+}
+function valorColumnaExcel(row, aliases){
+  const k=buscarColumnaExcel(row,aliases);
+  return k==null?'':String(row[k]??'').trim();
+}
+function fechaExcelTexto(v){
+  if(v==null || v==='') return '';
+  if(typeof v==='number' && window.XLSX?.SSF){
+    try{
+      const d=XLSX.SSF.parse_date_code(v);
+      if(d?.y) return `${String(d.y).padStart(4,'0')}-${String(d.m).padStart(2,'0')}-${String(d.d).padStart(2,'0')}`;
+    }catch(e){}
+  }
+  const s=String(v).trim();
+  if(/^\d{1,2}[\/\-]\d{1,2}[\/\-]\d{2,4}$/.test(s)){
+    const p=s.split(/[\/\-]/).map(Number);
+    let [a,b,c]=p;
+    if(c<100)c+=2000;
+    if(a>1900)return `${a}-${String(b).padStart(2,'0')}-${String(c).padStart(2,'0')}`;
+    return `${String(c).padStart(4,'0')}-${String(b).padStart(2,'0')}-${String(a).padStart(2,'0')}`;
+  }
+  return s;
+}
+async function importarExcel(input){
+  const file=input?.files?.[0];
+  if(!file)return;
+  const status=document.getElementById('excelImportStatus');
+  try{
+    if(!window.XLSX){
+      const ok=await cargarExcelJS();
+      if(!ok)throw new Error('No se pudo cargar el módulo de Excel. Abre la aplicación con internet la primera vez.');
+    }
+    const data=await file.arrayBuffer();
+    const wb=XLSX.read(data,{type:'array',cellDates:false});
+    const ws=wb.Sheets[wb.SheetNames[0]];
+    if(!ws)throw new Error('El archivo no contiene una hoja de cálculo.');
+    const rows=XLSX.utils.sheet_to_json(ws,{defval:'',raw:true});
+    if(!rows.length)throw new Error('La primera hoja está vacía.');
+
+    let creados=0,actualizados=0,omitidos=0;
+    rows.forEach(row=>{
+      const name=valorColumnaExcel(row,['Nombre del alumno','Nombre','Alumno','Nombre completo','Estudiante']);
+      const matricula=valorColumnaExcel(row,['Matrícula','Matricula','No. de matrícula','Numero de matricula','Número de matrícula']);
+      if(!name && !matricula){omitidos++;return;}
+      const base={
+        id:'',
+        name:name || 'ALUMNO SIN NOMBRE',
+        grade:valorColumnaExcel(row,['Grado','Grado escolar']),
+        group:valorColumnaExcel(row,['Grupo','Grupo escolar']),
+        matricula:matricula,
+        birth:fechaExcelTexto(valorColumnaExcel(row,['Fecha de nacimiento','Nacimiento','Fecha nacimiento'])),
+        tutor:valorColumnaExcel(row,['Padre/Tutor','Padre tutor','Tutor','Padre','Madre','Nombre del tutor']),
+        tutorPhone:valorColumnaExcel(row,['Teléfono tutor','Telefono tutor','Teléfono','Telefono','Celular tutor','Tel celular']),
+        backup:valorColumnaExcel(row,['Suplente','Contacto suplente','Nombre suplente']),
+        backupPhone:valorColumnaExcel(row,['Teléfono suplente','Telefono suplente','Celular suplente']),
+        notes:valorColumnaExcel(row,['Notas / emergencia','Notas emergencia','Notas','Emergencia']),
+        photo:''
+      };
+      // Si ya existe la matrícula, actualizar ese registro en vez de duplicarlo.
+      let old=null;
+      if(base.matricula) old=db.students.find(s=>String(s.matricula||'').trim()===base.matricula);
+      if(!old) old=db.students.find(s=>String(s.name||'').trim().toLowerCase()===base.name.trim().toLowerCase());
+      if(old){
+        base.id=old.id;
+        base.photo=old.photo||'';
+        Object.assign(old,base);
+        actualizados++;
+      }else{
+        base.id=crypto.randomUUID();
+        db.students.push(base);
+        creados++;
+      }
+    });
+    persist();
+    renderAll();
+    if(db.students.length){
+      selectedDesignStudentId=db.students[0].id;
+      renderDesignStudentSelect();
+      renderPreview();
+    }
+    if(status)status.textContent=`✅ Excel importado: ${creados} alumnos nuevos, ${actualizados} actualizados, ${omitidos} filas omitidas. Total: ${db.students.length}.`;
+    alert(`Importación terminada.\n\nNuevos: ${creados}\nActualizados: ${actualizados}\nOmitidos: ${omitidos}\nTotal de alumnos: ${db.students.length}\n\nAhora puedes pulsar “Generar credenciales de todos”.`);
+    input.value='';
+  }catch(e){
+    console.error('Importación Excel:',e);
+    if(status)status.textContent='❌ '+e.message;
+    alert('No se pudo importar el Excel.\n\n'+e.message);
+    input.value='';
+  }
+}
+async function descargarPlantillaExcel(){
+  try{
+    if(!window.XLSX){
+      const ok=await cargarExcelJS();
+      if(!ok)throw new Error('No se pudo cargar el módulo de Excel.');
+    }
+    const ejemplo=[{
+      'Nombre del alumno':'NOMBRE DEL ALUMNO',
+      'Grado':'6°',
+      'Grupo':'A',
+      'Matrícula':'000001',
+      'Fecha de nacimiento':'2014-05-20',
+      'Padre/Tutor':'NOMBRE DEL TUTOR',
+      'Teléfono tutor':'9990000000',
+      'Suplente':'NOMBRE DEL SUPLENTE',
+      'Teléfono suplente':'9990000001',
+      'Notas / emergencia':''
+    }];
+    const ws=XLSX.utils.json_to_sheet(ejemplo);
+    ws['!cols']=[{wch:30},{wch:10},{wch:10},{wch:16},{wch:20},{wch:30},{wch:18},{wch:30},{wch:18},{wch:40}];
+    const wb=XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb,ws,'Alumnos');
+    XLSX.writeFile(wb,'Plantilla_CredenSchool.xlsx');
+  }catch(e){alert('No se pudo crear la plantilla Excel.\n\n'+e.message);}
+}
+function generarCredencialesExcel(){
+  if(!db.students.length){
+    alert('Primero importa la base de datos de Excel.');
+    return;
+  }
+  // Genera un PDF con frente + reverso de todos los registros importados.
+  pdfBusy(true);
+  makePDF(db.students.filter(s=>s&&s.id)).finally(()=>pdfBusy(false));
+}
+
+async function exportarExcel(){
+  try{
+    if(!db.students.length){alert('No hay alumnos registrados para exportar.');return;}
+    if(!window.XLSX){
+      const ok=await cargarExcelJS();
+      if(!ok){alert('No se pudo cargar el módulo de Excel. Abre la aplicación con internet la primera vez para activar esta opción.');return;}
+    }
+    const filas=db.students.map((s,i)=>({
+      'No.':i+1,
+      'Nombre del alumno':s.name||'',
+      'Grado':s.grade||'',
+      'Grupo':s.group||'',
+      'Matrícula':s.matricula||'',
+      'Fecha de nacimiento':s.birth||'',
+      'Padre/Tutor':s.tutor||'',
+      'Teléfono tutor':s.tutorPhone||'',
+      'Suplente':s.backup||'',
+      'Teléfono suplente':s.backupPhone||'',
+      'Notas / emergencia':s.notes||''
+    }));
+    const ws=XLSX.utils.json_to_sheet(filas);
+    ws['!cols']=[{wch:6},{wch:34},{wch:10},{wch:10},{wch:16},{wch:18},{wch:30},{wch:18},{wch:30},{wch:18},{wch:40}];
+    const escuela=[{
+      'Escuela':db.school.name||'',
+      'CCT':db.school.cct||'',
+      'Ciclo escolar':db.school.cycle||'',
+      'Turno':db.school.shift||'',
+      'Director':db.school.director||'',
+      'Total de alumnos':db.students.length
+    }];
+    const ws2=XLSX.utils.json_to_sheet(escuela);
+    const wb=XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb,ws,'Alumnos');
+    XLSX.utils.book_append_sheet(wb,ws2,'Escuela');
+    const d=new Date(),stamp=d.getFullYear()+String(d.getMonth()+1).padStart(2,'0')+String(d.getDate()).padStart(2,'0');
+    XLSX.writeFile(wb,'CredenSchool_Alumnos_'+stamp+'.xlsx');
+  }catch(e){
+    console.error(e);
+    alert('Ocurrió un error al generar el archivo Excel.');
+  }
+}
+
+function verificarQRAlumno(){
+  const s=db.students.find(x=>x.id===selectedDesignStudentId)||db.students[0];
+  if(!s)return alert('Primero registra o selecciona un alumno.');
+  alert('El QR de esta credencial contiene:\n\n'+qrPayload(s));
+}
+function generarCredencialPrincipal(){
+  if(!db.students.length){
+    go('alumnos');
+    alert('Primero registra un alumno. Después selecciónalo en Diseño para generar su credencial.');
+    return;
+  }
+  selectedDesignStudentId=selectedDesignStudentId||db.students[0].id;
+  go('diseno');
+  renderDesignStudentSelect();
+  renderPreview();
+  setTimeout(()=>document.getElementById('credPreview')?.scrollIntoView({behavior:'smooth',block:'center'}),50);
+}
+
+function exportJSON(){let blob=new Blob([JSON.stringify(db,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='CredenSchool_Respaldo.json';a.click();URL.revokeObjectURL(a.href)}
+function importJSON(inp){let f=inp.files[0];if(!f)return;let r=new FileReader();r.onload=()=>{try{let x=JSON.parse(r.result);if(!x.school||!x.students)throw 0;db=x;persist();loadSchool();renderAll();renderPreview();alert('Respaldo importado.')}catch(e){alert('Archivo no válido.')}};r.readAsText(f)}
+function saveAccess(){db.access.user=newUser.value.trim()||'admin';db.access.pass=newPass.value||'admin123';db.access.role=newRole.value;persist();alert('Acceso actualizado.')}
+function resetApp(){confirmAction('Restablecer aplicación','Se borrarán todos los datos y se restaurarán los valores iniciales.',()=>{localStorage.removeItem(KEY);location.reload()})}
+function confirmAction(t,msg,fn){modalTitle.textContent=t;modalText.textContent=msg;modal.classList.add('show');modalOk.onclick=()=>{closeModal();fn()}}
+function closeModal(){modal.classList.remove('show')}
+try{renderAll();}catch(e){console.error('renderAll:',e);}
+</script>
+<script>
+window.addEventListener('load',function(){
+  try{
+    const app=document.getElementById('app'), login=document.getElementById('login');
+    // SIEMPRE solicitar usuario y contraseña al abrir la aplicación.
+    // No se usa una sesión guardada para saltar el acceso.
+    try{localStorage.removeItem('CredenSchool_login_ok');}catch(e){}
+    currentUser=null;
+    if(login) login.style.display='grid';
+    if(app){app.style.display='none';app.style.visibility='hidden';app.style.pointerEvents='none';}
+    const cs=document.getElementById('cameraStatus'); if(cs) cs.textContent='Listo. Puedes tomar o seleccionar la fotografía del alumno.';
+  }catch(e){console.error('Inicio CredenSchool:',e);}
+});
+</script>
+
+<script>
+(function(){
+  function showApp(){
+    const login=document.getElementById('login'), app=document.getElementById('app');
+    currentUser='admin';
+    if(login){login.style.display='none';login.style.visibility='hidden';login.style.pointerEvents='none';}
+    if(app){app.style.display='block';app.style.visibility='visible';app.style.opacity='1';app.style.pointerEvents='auto';}
+    try{if(typeof loadSchool==='function')loadSchool();if(typeof applyRoleUI==='function')applyRoleUI();if(typeof renderAll==='function')renderAll();if(typeof renderPreview==='function')renderPreview();}catch(e){console.error(e);}
+  }
+  window.CS_LOGIN_NOW = async function(){
+    const err=document.getElementById('lgErr');
+    const u=(document.getElementById('lgUser')?.value||'').trim();
+    const p=(document.getElementById('lgPass')?.value||'').trim();
+    if(!u||!p){if(err)err.textContent='Escribe correo y contraseña.';return false;}
+    const btn=document.getElementById('loginBtn');
+    if(btn){btn.disabled=true;btn.textContent='Entrando…';}
+    try{
+      if(!sb && typeof initCloud==='function') initCloud();
+      if(sb){
+        await cloudLogin(u,p);
+      }else{
+        const savedUser=String(db?.access?.user||'admin').trim()||'admin';
+        const savedPass=String(db?.access?.pass||'admin123');
+        if(u.toLowerCase()!==savedUser.toLowerCase() || p!==savedPass) throw new Error('Usuario o contraseña incorrectos.');
+        currentUser=savedUser;
+      }
+      if(err)err.textContent='';
+      showApp();
+      // cloudLogin ya inicia la sincronización en segundo plano.
+      // No esperamos a cloudPull aquí para evitar que el botón quede bloqueado.
+      return true;
+    }catch(e){
+      console.error('CredenSchool login:',e);
+      if(err)err.textContent='Error de acceso: '+(e?.message||e);
+      return false;
+    }finally{if(btn){btn.disabled=false;btn.textContent='Entrar';}}
+  };
+  window.CS_LOCAL_LOGIN=function(){
+    const err=document.getElementById('lgErr');
+    if(err)err.textContent='';
+    showApp();
+    return false;
+  };
+  document.addEventListener('DOMContentLoaded',function(){
+    const b=document.getElementById('loginBtn');
+    if(b){b.onclick=function(e){e.preventDefault();return window.CS_LOGIN_NOW();};}
+    const d=document.getElementById('entrarDirectoLocal');
+    if(d){d.onclick=function(e){e.preventDefault();return window.CS_LOCAL_LOGIN();};}
+    const p=document.getElementById('lgPass');
+    if(p)p.addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();window.CS_LOGIN_NOW();}});
+    const u=document.getElementById('lgUser');
+    if(u)u.addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();window.CS_LOGIN_NOW();}});
+  });
+})();
+</script>
+</body></html>
